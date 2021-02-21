@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="252.52438mm"
+   height="252.52438mm"
+   viewBox="0 0 252.52438 252.52438"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/media/dev/projects/AAF/typecaster/resources/images/raster/icon.png"
+   inkscape:export-xdpi="51.5"
+   inkscape:export-ydpi="51.5">
+  <defs
+     id="defs2">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1669"
+       x="-0.083999999"
+       width="1.168"
+       y="-0.083999999"
+       height="1.168">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="7.5670837"
+         id="feGaussianBlur1671" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="802.35329"
+     inkscape:cy="59.382665"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1378"
+     inkscape:window-height="836"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(21.262198,-22.237803)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1620-3"
+       width="216.20239"
+       height="216.20239"
+       x="-3.101197"
+       y="40.398804"
+       ry="68.426804" />
+    <rect
+       style="opacity:1;fill:#d0d0d0;fill-opacity:0;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.58823529;filter:url(#filter1669)"
+       id="rect1620-5"
+       width="216.20239"
+       height="216.20239"
+       x="-3.101197"
+       y="40.398804"
+       ry="68.426804" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot903"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Fira Code';-inkscape-font-specification:'Fira Code';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="scale(0.26458333)"><flowRegion
+         id="flowRegion905"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Fira Code';-inkscape-font-specification:'Fira Code'"><rect
+           id="rect907"
+           width="375.77673"
+           height="430.32498"
+           x="234.35539"
+           y="346.72253"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Fira Code';-inkscape-font-specification:'Fira Code'" /></flowRegion><flowPara
+         id="flowPara909" /></flowRoot>    <g
+       id="g974"
+       transform="matrix(3.8786692,0,0,3.8786692,-50.714692,-5.1077876)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path913"
+         style="fill:#5f5f5f;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+         d="m 68.828125,0 a 41.175742,41.175742 0 0 0 -41.175781,41.175781 41.175742,41.175742 0 0 0 41.175781,41.175781 41.175742,41.175742 0 0 0 1.939453,-0.04687 c 10.778899,4.348343 11.260432,12.709321 6.480469,21.783198 -4.94479,9.38676 -48.91937,-10.872729 -67.027344,9.63867 -18.1079772,20.51141 -7.2528193,32.13867 1.550781,32.13867 8.803597,0 2.583065,-14.98437 22.119141,-14.98437 19.536072,0 66.281505,51.42465 82.749995,22.90039 16.4685,-28.52427 0.11499,-56.50071 -10.66992,-60.984371 C 96.692621,88.939654 94.43711,77.036788 93.984375,73.771484 A 41.175742,41.175742 0 0 0 110.00391,41.175781 41.175742,41.175742 0 0 0 68.828125,0 Z"
+         transform="matrix(0.26458333,0,0,0.26458333,23.736066,18.119209)" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path913-6-1"
+         style="fill:#9d9d9d;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+         d="m 49.681682,29.39493 a 8.3342276,8.3342276 0 0 1 -8.334228,8.334227 8.3342276,8.3342276 0 0 1 -8.334227,-8.334227 8.3342276,8.3342276 0 0 1 8.334227,-8.334228 8.3342276,8.3342276 0 0 1 8.334228,8.334228 z" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path913-6"
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+         d="m 47.39385,29.721764 a 6.863481,6.863481 0 0 1 -6.863481,6.863481 6.863481,6.863481 0 0 1 -6.863481,-6.863481 6.863481,6.863481 0 0 1 6.863481,-6.863481 6.863481,6.863481 0 0 1 6.863481,6.863481 z" />
+    </g>
+    <rect
+       style="opacity:1;fill:#d0d0d0;fill-opacity:0;stroke:#fbfbfb;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1620"
+       width="216.20239"
+       height="216.20239"
+       x="-3.1011972"
+       y="40.398804"
+       ry="68.426804" />
+  </g>
+</svg>
