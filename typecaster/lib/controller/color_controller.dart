@@ -4,8 +4,8 @@ import 'package:get/state_manager.dart';
 class ColorController extends GetxController {
   Color bgColorDefault = Color.fromRGBO(235, 235, 235, 1);
   Rx<Color> bgColor = Color.fromRGBO(235, 235, 235, 1).obs;
-  Color bgColorContrastDefault = Color.fromRGBO(70, 70, 70, 1);
-  Rx<Color> bgColorContrast = Color.fromRGBO(70, 70, 70, 1).obs;
+  Color bgColorContrastDefault = Color.fromRGBO(50, 50, 50, 1);
+  Rx<Color> bgColorContrast = Color.fromRGBO(50, 50, 50, 1).obs;
   Color appStyleColor = Colors.blue;
   Color appAltColor = Colors.green;
   RxBool isDarkMode = false.obs;
