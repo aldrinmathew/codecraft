@@ -92,6 +92,192 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
+  Widget editPanel(BuildContext mainContext) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 20, bottom: 25),
+          alignment: Alignment.bottomCenter,
+          height: MediaQuery.of(mainContext).size.height * 0.43,
+          width: MediaQuery.of(mainContext).size.width,
+          child: ((editController.fileList[editController.activeFile.value]['activeLine']) != 0)
+              ? FittedBox(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      for (int i = (editController.fileList[editController.activeFile.value]
+                                      ['activeLine'] >=
+                                  (MediaQuery.of(mainContext).size.height / (3.2 * globalFontSize)))
+                              ? (editController.fileList[editController.activeFile.value]
+                                      ['activeLine'] -
+                                  (MediaQuery.of(mainContext).size.height ~/
+                                      (3.2 * globalFontSize)))
+                              : (0);
+                          (editController.editMode.value)
+                              ? (i <
+                                  editController.fileList[editController.activeFile.value]
+                                      ['activeLine'])
+                              : (i <=
+                                  editController.fileList[editController.activeFile.value]
+                                      ['activeLine']);
+                          i++)
+                        Container(
+                          width: MediaQuery.of(mainContext).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              (editController
+                                          .fileContent[editController.activeFile.value]['content']
+                                          .length >
+                                      1000)
+                                  ? (SizedBox(
+                                      width: 20,
+                                    ))
+                                  : ((editController
+                                              .fileContent[editController.activeFile.value]
+                                                  ['content']
+                                              .length >
+                                          100)
+                                      ? (SizedBox(
+                                          width: 10,
+                                        ))
+                                      : (SizedBox(
+                                          width: 5,
+                                        ))),
+                              Container(
+                                padding: EdgeInsets.only(right: 20),
+                                width: MediaQuery.of(mainContext).size.width * 0.03,
+                                alignment: Alignment.centerRight,
+                                child: FittedBox(
+                                  child: Text((i + 1).toString() + '  ',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          color: colorController.bgColorContrast.value
+                                              .withOpacity(0.5),
+                                          fontFamily: fontFamily,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle: FontStyle.italic)),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(mainContext).size.width * 0.90,
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: editController
+                                        .fileContent[editController.activeFile.value]['content'][i],
+                                    style: TextStyle(
+                                      color: colorController.bgColorContrast.value.withOpacity(0.8),
+                                      fontFamily: fontFamily,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                )
+              : (Container()),
+        ),
+        if (editController.editMode.value)
+          Container(
+            height: MediaQuery.of(mainContext).size.height * 0.06,
+          ),
+        if (editController.editMode.value &&
+            (editController.fileList[editController.activeFile.value]['activeLine'] !=
+                (editController.fileContent[editController.activeFile.value]['content'].length -
+                    1)))
+          Container(
+            padding: EdgeInsets.only(top: 25, bottom: 20),
+            alignment: Alignment.topCenter,
+            height: MediaQuery.of(mainContext).size.height * 0.43,
+            width: MediaQuery.of(mainContext).size.width,
+            child: FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  for (int i = editController.fileList[editController.activeFile.value]
+                              ['activeLine'] +
+                          1;
+                      (editController.fileContent[editController.activeFile.value]['content']
+                                      .length -
+                                  editController.fileList[editController.activeFile.value]
+                                      ['activeLine'] >
+                              (MediaQuery.of(mainContext).size.height / (3.2 * globalFontSize)))
+                          ? (i <
+                              editController.fileList[editController.activeFile.value]
+                                      ['activeLine'] +
+                                  (MediaQuery.of(mainContext).size.height / (3.2 * globalFontSize)))
+                          : (i <
+                              editController
+                                  .fileContent[editController.activeFile.value]['content'].length);
+                      i++)
+                    Container(
+                      width: MediaQuery.of(mainContext).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          (editController.fileList[editController.activeFile.value]['activeLine'] >
+                                  1000)
+                              ? (SizedBox(
+                                  width: 20,
+                                ))
+                              : ((editController.fileList[editController.activeFile.value]
+                                          ['activeLine'] >
+                                      100)
+                                  ? (SizedBox(
+                                      width: 10,
+                                    ))
+                                  : (SizedBox(
+                                      width: 5,
+                                    ))),
+                          Container(
+                            padding: EdgeInsets.only(right: 20),
+                            width: MediaQuery.of(mainContext).size.width * 0.03,
+                            alignment: Alignment.centerRight,
+                            child: FittedBox(
+                              child: Text((i + 1).toString() + '  ',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      color: colorController.bgColorContrast.value.withOpacity(0.5),
+                                      fontFamily: fontFamily,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.italic)),
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(mainContext).size.width * 0.90,
+                            child: RichText(
+                              text: TextSpan(
+                                text: editController.fileContent[editController.activeFile.value]
+                                    ['content'][i],
+                                style: TextStyle(
+                                  color: colorController.bgColorContrast.value.withOpacity(0.8),
+                                  fontFamily: fontFamily,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext mainContext) {
     return Obx(() {
@@ -112,108 +298,7 @@ class _HomeViewState extends State<HomeView> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(top: 20, bottom: 25),
-                            alignment: Alignment.bottomCenter,
-                            height: MediaQuery.of(mainContext).size.height * 0.43,
-                            width: MediaQuery.of(mainContext).size.width,
-                            child: FittedBox(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  for (int i =
-                                          (editController.fileList[editController.activeFile.value]
-                                                      ['activeLine'] >=
-                                                  (MediaQuery.of(mainContext).size.height /
-                                                      (3 * globalFontSize)))
-                                              ? (editController
-                                                          .fileList[editController.activeFile.value]
-                                                      ['activeLine'] -
-                                                  (MediaQuery.of(mainContext).size.height ~/
-                                                      (3 * globalFontSize)))
-                                              : (0);
-                                      (editController.editMode.value)
-                                          ? (i <
-                                              editController
-                                                      .fileList[editController.activeFile.value]
-                                                  ['activeLine'])
-                                          : (i <=
-                                              editController
-                                                      .fileList[editController.activeFile.value]
-                                                  ['activeLine']);
-                                      i++)
-                                    Container(
-                                      width: MediaQuery.of(mainContext).size.width,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          (editController.fileList[editController.activeFile.value]
-                                                      ['activeLine'] >
-                                                  1000)
-                                              ? (SizedBox(
-                                                  width: 20,
-                                                ))
-                                              : ((editController.fileList[editController
-                                                          .activeFile.value]['activeLine'] >
-                                                      100)
-                                                  ? (SizedBox(
-                                                      width: 10,
-                                                    ))
-                                                  : (SizedBox(
-                                                      width: 5,
-                                                    ))),
-                                          Container(
-                                            padding: EdgeInsets.only(right: 20),
-                                            width: MediaQuery.of(mainContext).size.width * 0.03,
-                                            alignment: Alignment.centerRight,
-                                            child: FittedBox(
-                                              child: Text((i + 1).toString() + '  ',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      color: colorController.bgColorContrast.value
-                                                          .withOpacity(0.5),
-                                                      fontFamily: fontFamily,
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.normal,
-                                                      fontStyle: FontStyle.italic)),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(mainContext).size.width * 0.90,
-                                            child: RichText(
-                                              text: TextSpan(
-                                                text: editController.fileContent[
-                                                    editController.activeFile.value]['content'][i],
-                                                style: TextStyle(
-                                                  color: colorController.bgColorContrast.value
-                                                      .withOpacity(0.8),
-                                                  fontFamily: fontFamily,
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: MediaQuery.of(mainContext).size.height * 0.06,
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(top: 30),
-                              height: MediaQuery.of(mainContext).size.height * 0.43,
-                              width: MediaQuery.of(mainContext).size.width,
-                              child: Text('dfhnkdsajfkjasbdashdkj;dbkjasbdk')),
-                        ],
-                      ),
+                      if (editController.editMode.value) editPanel(mainContext),
                       if (editController.editMode.value)
                         Row(
                           children: [
@@ -256,7 +341,12 @@ class _HomeViewState extends State<HomeView> {
                                               ['activeLine']] = text;
                                       editController.fileContent[editController.activeFile.value]
                                               ['content']
-                                          .add('');
+                                          .insert(
+                                              editController
+                                                          .fileList[editController.activeFile.value]
+                                                      ['activeLine'] +
+                                                  1,
+                                              '');
                                       editController.fileList[editController.activeFile.value]
                                           ['activeLine'] += 1;
                                       textEditControl = TextEditingController(
@@ -319,8 +409,9 @@ class _HomeViewState extends State<HomeView> {
                         }
                         editController.editMode.value = !(editController.editMode.value);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
-                        if (editController.editMode.value && editController.fileList[editController.activeFile.value]
-                                      ['activeLine'] > 0) {
+                        if (editController.editMode.value &&
+                            editController.fileList[editController.activeFile.value]['activeLine'] >
+                                0) {
                           editController.fileList[editController.activeFile.value]['activeLine'] -=
                               1;
                           textEditControl = TextEditingController(
@@ -333,9 +424,12 @@ class _HomeViewState extends State<HomeView> {
                               extentOffset: textEditControl.text.length);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
-                        if (editController.editMode.value && editController.fileList[editController.activeFile.value]
-                                      ['activeLine'] < editController.fileContent[editController.activeFile.value]
-                                      ['content'].length - 1) {
+                        if (editController.editMode.value &&
+                            editController.fileList[editController.activeFile.value]['activeLine'] <
+                                editController
+                                        .fileContent[editController.activeFile.value]['content']
+                                        .length -
+                                    1) {
                           editController.fileList[editController.activeFile.value]['activeLine'] +=
                               1;
                           textEditControl = TextEditingController(
@@ -357,7 +451,10 @@ class _HomeViewState extends State<HomeView> {
                         if (textEditControl.text.length == 0 &&
                             (editController.fileContent[editController.activeFile.value]['content']
                                     .length >
-                                1)) {
+                                1) &&
+                            (editController.fileList[editController.activeFile.value]
+                                    ['activeLine'] !=
+                                0)) {
                           editController.fileList[editController.activeFile.value]['activeLine'] -=
                               1;
                           editTextFocusNode.unfocus();
@@ -375,6 +472,36 @@ class _HomeViewState extends State<HomeView> {
                               baseOffset: textEditControl.text.length,
                               extentOffset: textEditControl.text.length);
                         }
+                      }
+                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                      if (editController.editMode.value &&
+                          editController.fileList[editController.activeFile.value]['activeLine'] >
+                              0) {
+                        editController.fileList[editController.activeFile.value]['activeLine'] -= 1;
+                        textEditControl = TextEditingController(
+                            text: editController.fileContent[editController.activeFile.value]
+                                    ['content'][
+                                editController.fileList[editController.activeFile.value]
+                                    ['activeLine']]);
+                        textEditControl.selection = TextSelection(
+                            baseOffset: textEditControl.text.length,
+                            extentOffset: textEditControl.text.length);
+                      }
+                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+                      if (editController.editMode.value &&
+                          editController.fileList[editController.activeFile.value]['activeLine'] <
+                              editController.fileContent[editController.activeFile.value]['content']
+                                      .length -
+                                  1) {
+                        editController.fileList[editController.activeFile.value]['activeLine'] += 1;
+                        textEditControl = TextEditingController(
+                            text: editController.fileContent[editController.activeFile.value]
+                                    ['content'][
+                                editController.fileList[editController.activeFile.value]
+                                    ['activeLine']]);
+                        textEditControl.selection = TextSelection(
+                            baseOffset: textEditControl.text.length,
+                            extentOffset: textEditControl.text.length);
                       }
                     }
                   },
@@ -454,9 +581,15 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             TextSpan(
                               text: (editController.editMode.value)
-                                  ? ((editController.cacheText.value.length > 1000)
-                                      ? ('${(editController.cacheText.value.length / 1000).toStringAsFixed(1)}k Ch')
-                                      : ('${editController.cacheText.value.length} Ch'))
+                                  ? ((editController
+                                              .fileContent[editController.activeFile.value]
+                                                  ['content'][editController
+                                                          .fileList[editController.activeFile.value]
+                                                      ['activeLine']]
+                                              .length >
+                                          1000)
+                                      ? ('${(editController.fileContent[editController.activeFile.value]['content'][editController.fileList[editController.activeFile.value]['activeLine']].length / 1000).toStringAsFixed(1)}k Ch')
+                                      : ('${editController.fileContent[editController.activeFile.value]['content'][editController.fileList[editController.activeFile.value]['activeLine']].length} Ch'))
                                   : (editController
                                           .fileContent[editController.activeFile.value]['content'][
                                               editController
