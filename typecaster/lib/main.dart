@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:typecaster/controller/global_controller.dart';
+import './controller/global_controller.dart';
+import './functions.dart';
 import '../controller/color_controller.dart';
 import '../controller/edit_controller.dart';
 
@@ -17,6 +18,37 @@ int globalFontSize = 15;
 ColorController colorController = ColorController();
 EditController editController = EditController();
 GlobalController globalController = GlobalController();
+TextEditingController textEditControl;
+FocusNode editTextFocusNode;
+FocusNode homeViewFocusNode;
+StopWatchTimer editModeTimer = StopWatchTimer(
+  onChange: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    editController.editModeTime.value = displayTime;
+  },
+  onChangeRawSecond: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    editController.editModeTime.value = displayTime;
+  },
+  onChangeRawMinute: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    editController.editModeTime.value = displayTime;
+  },
+);
+StopWatchTimer globalTimer = StopWatchTimer(
+  onChange: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    globalController.globalTime.value = displayTime;
+  },
+  onChangeRawSecond: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    globalController.globalTime.value = displayTime;
+  },
+  onChangeRawMinute: (value) {
+    String displayTime = StopWatchTimer.getDisplayTime(value);
+    globalController.globalTime.value = displayTime;
+  },
+);
 
 class TypeCaster extends StatelessWidget {
   @override
@@ -38,38 +70,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  TextEditingController textEditControl;
-  FocusNode editTextFocusNode;
-  FocusNode homeViewFocusNode;
-  StopWatchTimer editModeTimer = StopWatchTimer(
-    onChange: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      editController.editModeTime.value = displayTime;
-    },
-    onChangeRawSecond: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      editController.editModeTime.value = displayTime;
-    },
-    onChangeRawMinute: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      editController.editModeTime.value = displayTime;
-    },
-  );
-  StopWatchTimer globalTimer = StopWatchTimer(
-    onChange: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      globalController.globalTime.value = displayTime;
-    },
-    onChangeRawSecond: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      globalController.globalTime.value = displayTime;
-    },
-    onChangeRawMinute: (value) {
-      String displayTime = StopWatchTimer.getDisplayTime(value);
-      globalController.globalTime.value = displayTime;
-    },
-  );
-
   void initState() {
     homeViewFocusNode = FocusNode(
       canRequestFocus: true,
@@ -314,7 +314,7 @@ class _HomeViewState extends State<HomeView> {
                                     textAlign: TextAlign.center,
                                     textAlignVertical: TextAlignVertical.center,
                                     autofocus: false,
-                                    cursorWidth: editController.fontSize.value / 1.8,
+                                    cursorWidth: editController.fontSize.value / 1.5,
                                     cursorColor: colorController.bgColorContrast.value,
                                     cursorHeight: editController.fontSize.value * 1.4,
                                     enableInteractiveSelection: true,
@@ -394,52 +394,18 @@ class _HomeViewState extends State<HomeView> {
                     if (keyEvent.isControlPressed) {
                       if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
                         if (!(editController.editMode.value)) {
-                          textEditControl = TextEditingController(
-                              text: editController.fileContent[editController.activeFile.value]
-                                      ['content'][
-                                  editController.fileList[editController.activeFile.value]
-                                      ['activeLine']]);
-                          editTextFocusNode.requestFocus();
-                          editModeTimer.onExecute.add(StopWatchExecute.start);
+                          editModeStart();
                         } else {
-                          textEditControl = TextEditingController(text: '');
-                          editTextFocusNode.unfocus();
-                          homeViewFocusNode.requestFocus();
-                          editModeTimer.onExecute.add(StopWatchExecute.stop);
+                          editModeEnd();
                         }
                         editController.editMode.value = !(editController.editMode.value);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
-                        if (editController.editMode.value &&
-                            editController.fileList[editController.activeFile.value]['activeLine'] >
-                                0) {
-                          editController.fileList[editController.activeFile.value]['activeLine'] -=
-                              1;
-                          textEditControl = TextEditingController(
-                              text: editController.fileContent[editController.activeFile.value]
-                                      ['content'][
-                                  editController.fileList[editController.activeFile.value]
-                                      ['activeLine']]);
-                          textEditControl.selection = TextSelection(
-                              baseOffset: textEditControl.text.length,
-                              extentOffset: textEditControl.text.length);
+                        if (upLineCandidate()) {
+                          activeLineDecrement();
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
-                        if (editController.editMode.value &&
-                            editController.fileList[editController.activeFile.value]['activeLine'] <
-                                editController
-                                        .fileContent[editController.activeFile.value]['content']
-                                        .length -
-                                    1) {
-                          editController.fileList[editController.activeFile.value]['activeLine'] +=
-                              1;
-                          textEditControl = TextEditingController(
-                              text: editController.fileContent[editController.activeFile.value]
-                                      ['content'][
-                                  editController.fileList[editController.activeFile.value]
-                                      ['activeLine']]);
-                          textEditControl.selection = TextSelection(
-                              baseOffset: textEditControl.text.length,
-                              extentOffset: textEditControl.text.length);
+                        if (downLineCandidate()) {
+                          activeLineIncrement();
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyQ)) {
                         exit(0);
@@ -448,118 +414,23 @@ class _HomeViewState extends State<HomeView> {
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {
-                        if (((textEditControl.selection.start == 0) &&
-                                (textEditControl.selection.end == 0)) &&
-                            (editController.fileContent[editController.activeFile.value]['content']
-                                    .length >
-                                1) &&
-                            (editController.fileList[editController.activeFile.value]
-                                    ['activeLine'] !=
-                                0)) {
-                          int previousExtent = editController
-                              .fileContent[editController.activeFile.value]['content'][
-                                  editController.fileList[editController.activeFile.value]
-                                          ['activeLine'] -
-                                      1]
-                              .length;
-                          editController.fileList[editController.activeFile.value]['activeLine'] -=
-                              1;
-                          editTextFocusNode.unfocus();
-                          textEditControl = TextEditingController(
-                              text: editController.fileContent[editController.activeFile.value]
-                                          ['content'][
-                                      editController.fileList[editController.activeFile.value]
-                                          ['activeLine']] +
-                                  editController.fileContent[editController.activeFile.value]
-                                      ['content'][editController
-                                          .fileList[editController.activeFile.value]['activeLine'] +
-                                      1]);
-                          editController.cacheText.value = textEditControl.text;
-                          editController.fileContent[editController.activeFile.value]['content'][
-                              editController.fileList[editController.activeFile.value]
-                                  ['activeLine']] = editController.cacheText.value;
-                          editController.fileContent[editController.activeFile.value]['content']
-                              .removeAt(editController.fileList[editController.activeFile.value]
-                                      ['activeLine'] +
-                                  1);
-                          editTextFocusNode.requestFocus();
-                          textEditControl.selection = TextSelection(
-                              baseOffset: previousExtent, extentOffset: previousExtent);
+                        if (backspaceCandidate()) {
+                          backspaceLine();
                         }
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.delete)) {
                       if (editController.editMode.value) {
-                        print(textEditControl.selection.end);
-                        if (((textEditControl.selection.start ==
-                                    editController
-                                        .fileContent[editController.activeFile.value]['content'][
-                                            editController.fileList[editController.activeFile.value]
-                                                ['activeLine']]
-                                        .length) &&
-                                (textEditControl.selection.end ==
-                                    editController
-                                        .fileContent[editController.activeFile.value]['content'][
-                                            editController.fileList[editController.activeFile.value]
-                                                ['activeLine']]
-                                        .length)) &&
-                            (editController.fileContent[editController.activeFile.value]['content']
-                                    .length >
-                                1) &&
-                            (editController.fileList[editController.activeFile.value]['activeLine'] !=
-                                (editController.fileContent[editController.activeFile.value]['content'].length - 1))) {
-                          int originalExtent = textEditControl.selection.start;
-                          editTextFocusNode.unfocus();
-                          textEditControl = TextEditingController(
-                              text: editController.fileContent[editController.activeFile.value]
-                                          ['content'][
-                                      editController.fileList[editController.activeFile.value]
-                                          ['activeLine']] +
-                                  editController.fileContent[editController.activeFile.value]
-                                      ['content'][editController
-                                          .fileList[editController.activeFile.value]['activeLine'] +
-                                      1]);
-                          editController.cacheText.value = textEditControl.text;
-                          editController.fileContent[editController.activeFile.value]['content'][
-                              editController.fileList[editController.activeFile.value]
-                                  ['activeLine']] = editController.cacheText.value;
-                          editController.fileContent[editController.activeFile.value]['content']
-                              .removeAt(editController.fileList[editController.activeFile.value]
-                                      ['activeLine'] +
-                                  1);
-                          editTextFocusNode.requestFocus();
-                          textEditControl.selection = TextSelection(
-                              baseOffset: originalExtent, extentOffset: originalExtent);
+                        if (deleteNewlineCandidate()) {
+                          deleteNewLine();
                         }
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-                      if (editController.editMode.value &&
-                          editController.fileList[editController.activeFile.value]['activeLine'] >
-                              0) {
-                        editController.fileList[editController.activeFile.value]['activeLine'] -= 1;
-                        textEditControl = TextEditingController(
-                            text: editController.fileContent[editController.activeFile.value]
-                                    ['content'][
-                                editController.fileList[editController.activeFile.value]
-                                    ['activeLine']]);
-                        textEditControl.selection = TextSelection(
-                            baseOffset: textEditControl.text.length,
-                            extentOffset: textEditControl.text.length);
+                      if (upLineCandidate()) {
+                        activeLineDecrement();
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-                      if (editController.editMode.value &&
-                          editController.fileList[editController.activeFile.value]['activeLine'] <
-                              editController.fileContent[editController.activeFile.value]['content']
-                                      .length -
-                                  1) {
-                        editController.fileList[editController.activeFile.value]['activeLine'] += 1;
-                        textEditControl = TextEditingController(
-                            text: editController.fileContent[editController.activeFile.value]
-                                    ['content'][
-                                editController.fileList[editController.activeFile.value]
-                                    ['activeLine']]);
-                        textEditControl.selection = TextSelection(
-                            baseOffset: textEditControl.text.length,
-                            extentOffset: textEditControl.text.length);
+                      if (downLineCandidate()) {
+                        activeLineIncrement();
                       }
                     }
                   },
