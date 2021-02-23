@@ -151,24 +151,40 @@ bool downLineCandidate() {
 
 /// Changes the active Line to the previous line and changes the value of the editable text.
 void activeLineDecrement() {
+  int cursorPosition = textEditControl.selection.start;
   editController.fileList[editController.activeFile.value]['activeLine'] -= 1;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
-  textEditControl.selection = TextSelection(
-      baseOffset: textEditControl.text.length,
-      extentOffset: textEditControl.text.length); // Done to prevent cursor position index errors
+  
+  //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
+  if (textEditControl.text.length < cursorPosition) {
+    textEditControl.selection = TextSelection(
+        baseOffset: textEditControl.text.length,
+        extentOffset: textEditControl.text.length);
+  } else {
+    textEditControl.selection =
+        TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+  }
 }
 
 /// Changes the active Line to the next line and changes the value of the editable text.
 void activeLineIncrement() {
+  int cursorPosition = textEditControl.selection.start;
   editController.fileList[editController.activeFile.value]['activeLine'] += 1;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
-  textEditControl.selection = TextSelection(
-      baseOffset: textEditControl.text.length,
-      extentOffset: textEditControl.text.length); // Done to prevent cursor position index errors
+  
+  //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
+  if (textEditControl.text.length < cursorPosition) {
+    textEditControl.selection = TextSelection(
+        baseOffset: textEditControl.text.length,
+        extentOffset: textEditControl.text.length);
+  } else {
+    textEditControl.selection =
+        TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+  }
 }
 
 /// Checks if the cusor position is at the end, in which case, the next line can be deleted after its content is added to the current line.

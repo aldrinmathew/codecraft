@@ -11,6 +11,7 @@ class EditController extends GetxController {
       'fileID': 1,
       'fileName': 'Untitled 1',
       'activeLine': 0,
+      'saved': false,
     },
   ];
   List<Map<String, List<String>>> fileContent = [

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:intl/intl.dart';
 import '../view/status_bar.dart';
 import './controller/global_controller.dart';
 import './functions.dart';
@@ -11,6 +12,7 @@ import '../controller/color_controller.dart';
 import '../controller/edit_controller.dart';
 
 void main() {
+  Intl.defaultLocale = 'pt_BR';
   runApp(TypeCaster());
 }
 
@@ -350,7 +352,31 @@ class _HomeViewState extends State<HomeView> {
                       if (downLineCandidate()) {
                         activeLineIncrement();
                       }
-                    }
+                    } else if ((keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) && (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT))) {
+                        DateFormat dateFormat = DateFormat.jms('en_US');
+                        String dateTime = dateFormat.format(DateTime.now());
+                        String text = textEditControl.text;
+                        int offset;
+                        int offsetEnd;
+                        if (textEditControl.selection.start == textEditControl.selection.end) {
+                          offset = textEditControl.selection.start;
+                          text = text.substring(0, offset) + dateTime + text.substring(offset);
+                        } else {
+                          offset = textEditControl.selection.start;
+                          offsetEnd = textEditControl.selection.end;
+                          text = text.substring(0, offset) + dateTime + text.substring(offsetEnd);
+                        }
+                        textEditControl = TextEditingController(text: text);
+                        if (textEditControl.selection.start != textEditControl.selection.end) {
+                          textEditControl.selection = TextSelection(
+                              baseOffset: offset, extentOffset: offset + dateTime.length);
+                        } else {
+                          textEditControl.selection = TextSelection(
+                              baseOffset: offset + dateTime.length,
+                              extentOffset: offset + dateTime.length);
+                        }
+                        editTextFocusNode.requestFocus();
+                      }
                   },
                 ),
               ),
