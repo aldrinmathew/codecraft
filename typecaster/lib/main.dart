@@ -12,7 +12,7 @@ import '../controller/color_controller.dart';
 import '../controller/edit_controller.dart';
 
 void main() {
-  Intl.defaultLocale = 'pt_BR';
+  Intl.defaultLocale = 'en_BR';
   runApp(TypeCaster());
 }
 
@@ -104,57 +104,62 @@ class _HomeViewState extends State<HomeView> {
           width: MediaQuery.of(mainContext).size.width,
           child: ((editController.fileList[editController.activeFile.value]['activeLine']) != 0)
               ? FittedBox(
+                child: ClipRRect(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      for (int i = upperSectionLoopInitializer(mainContext);
-                          upperSectionloopCandidate(mainContext, i);
-                          i++)
-                        Container(
-                          width: MediaQuery.of(mainContext).size.width,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              spacingLineNumber(),
-                              Container(
-                                padding: EdgeInsets.only(right: 20),
-                                width: MediaQuery.of(mainContext).size.width * 0.03,
-                                alignment: Alignment.centerRight,
-                                child: FittedBox(
-                                  child: Text(
-                                    lineNumber(i),
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      color: colorController.bgColorContrast.value.withOpacity(0.5),
-                                      fontFamily: fontFamily,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.italic,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = upperSectionLoopInitializer(mainContext);
+                            upperSectionloopCandidate(mainContext, i);
+                            i++)
+                          Container(
+                            width: MediaQuery.of(mainContext).size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                spacingLineNumber(),
+                                Container(
+                                  padding: EdgeInsets.only(right: 20),
+                                  width: MediaQuery.of(mainContext).size.width * 0.03,
+                                  alignment: Alignment.centerRight,
+                                  child: FittedBox(
+                                    child: Text(
+                                      lineNumber(i),
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        color: colorController.bgColorContrast.value.withOpacity(0.5),
+                                        fontFamily: fontFamily,
+                                        fontSize: editController.fontSize.value,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(mainContext).size.width * 0.90,
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: lineContent(i),
-                                    style: TextStyle(
-                                      color: colorController.bgColorContrast.value.withOpacity(0.8),
-                                      fontFamily: globalController.displayFont.value,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 15,
+                                Container(
+                                  width: MediaQuery.of(mainContext).size.width * 0.90,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: lineContent(i),
+                                      style: TextStyle(
+                                        color: colorController.bgColorContrast.value.withOpacity(0.8),
+                                        fontFamily: globalController.displayFont.value,
+                                        fontWeight: (colorController.isDarkMode.value)
+                                            ? (FontWeight.normal)
+                                            : (FontWeight.w500),
+                                        fontSize: editController.fontSize.value,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                )
+                      ],
+                    ),
+                ),
+              )
               : (Container()),
         ),
         if (editController.editMode.value)
@@ -168,57 +173,61 @@ class _HomeViewState extends State<HomeView> {
             height: MediaQuery.of(mainContext).size.height * 0.43,
             width: MediaQuery.of(mainContext).size.width,
             child: FittedBox(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  for (int i = editController.fileList[editController.activeFile.value]
-                              ['activeLine'] +
-                          1;
-                      lowerSectionLoopCandidate(mainContext, i);
-                      i++)
-                    Container(
-                      width: MediaQuery.of(mainContext).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          spacingLineNumber(),
-                          Container(
-                            padding: EdgeInsets.only(right: 20),
-                            width: MediaQuery.of(mainContext).size.width * 0.03,
-                            alignment: Alignment.centerRight,
-                            child: FittedBox(
-                              child: Text(
-                                lineNumber(i),
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: colorController.bgColorContrast.value.withOpacity(0.5),
-                                  fontFamily: fontFamily,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                  fontStyle: FontStyle.italic,
+              child: ClipRRect(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (int i =
+                            editController.fileList[editController.activeFile.value]['activeLine'] + 1;
+                        lowerSectionLoopCandidate(mainContext, i);
+                        i++)
+                      Container(
+                        width: MediaQuery.of(mainContext).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            spacingLineNumber(),
+                            Container(
+                              padding: EdgeInsets.only(right: 20),
+                              width: MediaQuery.of(mainContext).size.width * 0.03,
+                              alignment: Alignment.centerRight,
+                              child: FittedBox(
+                                child: Text(
+                                  lineNumber(i),
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: colorController.bgColorContrast.value.withOpacity(0.5),
+                                    fontFamily: fontFamily,
+                                    fontSize: editController.fontSize.value,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(mainContext).size.width * 0.90,
-                            child: RichText(
-                              text: TextSpan(
-                                text: lineContent(i),
-                                style: TextStyle(
-                                  color: colorController.bgColorContrast.value.withOpacity(0.8),
-                                  fontFamily: globalController.displayFont.value,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15,
+                            Container(
+                              width: MediaQuery.of(mainContext).size.width * 0.90,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: lineContent(i),
+                                  style: TextStyle(
+                                    color: colorController.bgColorContrast.value.withOpacity(0.8),
+                                    fontFamily: globalController.displayFont.value,
+                                    fontWeight: (colorController.isDarkMode.value)
+                                        ? (FontWeight.normal)
+                                        : (FontWeight.w500),
+                                    fontSize: editController.fontSize.value,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -255,7 +264,7 @@ class _HomeViewState extends State<HomeView> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   width: MediaQuery.of(mainContext).size.width * 0.9,
-                                  height: MediaQuery.of(mainContext).size.height * 0.06,
+                                  height: MediaQuery.of(mainContext).size.height * 0.06 * (editController.fontSize.value / 20),
                                   child: TextField(
                                     focusNode: editTextFocusNode,
                                     controller: textEditControl,
@@ -327,6 +336,16 @@ class _HomeViewState extends State<HomeView> {
                         if (downLineCandidate()) {
                           activeLineIncrement();
                         }
+                      } else if ((keyEvent.isShiftPressed) &&
+                              (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) ||
+                          (keyEvent.isKeyPressed(LogicalKeyboardKey.equal))) {
+                        globalController.globalFontSize.value++;
+                        editController.fontSize.value++;
+                      } else if ((keyEvent.isShiftPressed) &&
+                              (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) ||
+                          (keyEvent.isKeyPressed(LogicalKeyboardKey.minus))) {
+                        globalController.globalFontSize.value--;
+                        editController.fontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyQ)) {
                         exit(0);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
@@ -352,31 +371,32 @@ class _HomeViewState extends State<HomeView> {
                       if (downLineCandidate()) {
                         activeLineIncrement();
                       }
-                    } else if ((keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) && (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT))) {
-                        DateFormat dateFormat = DateFormat.jms('en_US');
-                        String dateTime = dateFormat.format(DateTime.now());
-                        String text = textEditControl.text;
-                        int offset;
-                        int offsetEnd;
-                        if (textEditControl.selection.start == textEditControl.selection.end) {
-                          offset = textEditControl.selection.start;
-                          text = text.substring(0, offset) + dateTime + text.substring(offset);
-                        } else {
-                          offset = textEditControl.selection.start;
-                          offsetEnd = textEditControl.selection.end;
-                          text = text.substring(0, offset) + dateTime + text.substring(offsetEnd);
-                        }
-                        textEditControl = TextEditingController(text: text);
-                        if (textEditControl.selection.start != textEditControl.selection.end) {
-                          textEditControl.selection = TextSelection(
-                              baseOffset: offset, extentOffset: offset + dateTime.length);
-                        } else {
-                          textEditControl.selection = TextSelection(
-                              baseOffset: offset + dateTime.length,
-                              extentOffset: offset + dateTime.length);
-                        }
-                        editTextFocusNode.requestFocus();
+                    } else if ((keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) &&
+                        (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT))) {
+                      DateFormat dateFormat = DateFormat.jms('en_US');
+                      String dateTime = dateFormat.format(DateTime.now());
+                      String text = textEditControl.text;
+                      int offset;
+                      int offsetEnd;
+                      if (textEditControl.selection.start == textEditControl.selection.end) {
+                        offset = textEditControl.selection.start;
+                        text = text.substring(0, offset) + dateTime + text.substring(offset);
+                      } else {
+                        offset = textEditControl.selection.start;
+                        offsetEnd = textEditControl.selection.end;
+                        text = text.substring(0, offset) + dateTime + text.substring(offsetEnd);
                       }
+                      textEditControl = TextEditingController(text: text);
+                      if (textEditControl.selection.start != textEditControl.selection.end) {
+                        textEditControl.selection = TextSelection(
+                            baseOffset: offset, extentOffset: offset + dateTime.length);
+                      } else {
+                        textEditControl.selection = TextSelection(
+                            baseOffset: offset + dateTime.length,
+                            extentOffset: offset + dateTime.length);
+                      }
+                      editTextFocusNode.requestFocus();
+                    }
                   },
                 ),
               ),

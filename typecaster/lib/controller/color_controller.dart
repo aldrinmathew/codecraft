@@ -7,8 +7,8 @@ class ColorController extends GetxController {
   Color bgColorContrastDefault = Color.fromRGBO(235, 235, 235, 1);
   Rx<Color> bgColorContrast = Color.fromRGBO(235, 235, 235, 1).obs;
   Rx<Color> contrastExtreme = Colors.black.obs;
-  Color appStyleColor = Colors.blue;
-  Color appAltColor = Colors.green;
+  Color appStyleColor = Colors.green;
+  Color appAltColor = Colors.blue;
   RxBool isDarkMode = true.obs;
   void darkModeChanger() {
     if(isDarkMode.value) {

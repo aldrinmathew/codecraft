@@ -36,6 +36,11 @@ Widget statusBar(BuildContext mainContext) {
             ],
           ),
         ),
+        Icon(
+                (colorController.isDarkMode.value) ? (Icons.lightbulb_outline) : (Icons.lightbulb),
+                size: 12,
+                color: colorController.bgColorContrast.value,
+              ),
         Container(
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Text(

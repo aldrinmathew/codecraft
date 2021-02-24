@@ -26,18 +26,50 @@ void textChange(String text) {
 }
 
 void textSubmit(String text) {
-  editController.fileContent[editController.activeFile.value]['content']
-      [editController.fileList[editController.activeFile.value]['activeLine']] = text;
-  editController.fileContent[editController.activeFile.value]['content']
-      .insert(editController.fileList[editController.activeFile.value]['activeLine'] + 1, '');
-  editController.fileList[editController.activeFile.value]['activeLine'] += 1;
-  textEditControl = TextEditingController(
-      text: editController.fileContent[editController.activeFile.value]['content']
-          [editController.fileList[editController.activeFile.value]['activeLine']]);
-  editController.cacheText.value = textEditControl.text;
-  editTextFocusNode.requestFocus();
-  textEditControl.selection = TextSelection(
-      baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+  if (textEditControl.selection.start == textEditControl.selection.end) {
+    if (textEditControl.selection.start == textEditControl.text.length) {
+      editController.fileContent[editController.activeFile.value]['content']
+          [editController.fileList[editController.activeFile.value]['activeLine']] = text;
+      editController.fileContent[editController.activeFile.value]['content']
+          .insert(editController.fileList[editController.activeFile.value]['activeLine'] + 1, '');
+      editController.fileList[editController.activeFile.value]['activeLine'] += 1;
+      textEditControl = TextEditingController(
+          text: editController.fileContent[editController.activeFile.value]['content']
+              [editController.fileList[editController.activeFile.value]['activeLine']]);
+      editController.cacheText.value = textEditControl.text;
+      textEditControl.selection = TextSelection(
+          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+      editTextFocusNode.requestFocus();
+    } else {
+      String textStart = textEditControl.text.substring(0, textEditControl.selection.start);
+      String textEnd = textEditControl.text.substring(textEditControl.selection.start);
+      editController.fileContent[editController.activeFile.value]['content']
+          [editController.fileList[editController.activeFile.value]['activeLine']] = textStart;
+      editController.fileContent[editController.activeFile.value]['content'].insert(
+          editController.fileList[editController.activeFile.value]['activeLine'] + 1, textEnd);
+      editController.fileList[editController.activeFile.value]['activeLine'] += 1;
+      textEditControl = TextEditingController(
+          text: editController.fileContent[editController.activeFile.value]['content']
+              [editController.fileList[editController.activeFile.value]['activeLine']]);
+      editController.cacheText.value = textEditControl.text;
+      textEditControl.selection = TextSelection(baseOffset: 0, extentOffset: 0);
+      editTextFocusNode.requestFocus();
+    }
+  } else {
+    String textStart = textEditControl.text.substring(0, textEditControl.selection.start);
+    String textEnd = textEditControl.text.substring(textEditControl.selection.end);
+    editController.fileContent[editController.activeFile.value]['content']
+        [editController.fileList[editController.activeFile.value]['activeLine']] = textStart;
+    editController.fileContent[editController.activeFile.value]['content'].insert(
+        editController.fileList[editController.activeFile.value]['activeLine'] + 1, textEnd);
+    editController.fileList[editController.activeFile.value]['activeLine'] += 1;
+    textEditControl = TextEditingController(
+        text: editController.fileContent[editController.activeFile.value]['content']
+            [editController.fileList[editController.activeFile.value]['activeLine']]);
+    editController.cacheText.value = textEditControl.text;
+    textEditControl.selection = TextSelection(baseOffset: 0, extentOffset: 0);
+    editTextFocusNode.requestFocus();
+  }
 }
 
 String lineNumber(int i) {
@@ -65,9 +97,9 @@ Widget spacingLineNumber() {
 ///
 int upperSectionLoopInitializer(BuildContext mainContext) {
   if (editController.fileList[editController.activeFile.value]['activeLine'] >=
-      (MediaQuery.of(mainContext).size.height / (3.2 * globalController.globalFontSize.value))) {
+      (MediaQuery.of(mainContext).size.height / (3.5 * editController.fontSize.value))) {
     return (editController.fileList[editController.activeFile.value]['activeLine'] -
-        (MediaQuery.of(mainContext).size.height ~/ (3.2 * globalController.globalFontSize.value)));
+        (MediaQuery.of(mainContext).size.height ~/ (3.5 * editController.fontSize.value)));
   } else {
     return 0;
   }
@@ -105,11 +137,11 @@ bool lowerSectionValidity() {
 bool lowerSectionLoopCandidate(BuildContext mainContext, int i) {
   if (editController.fileContent[editController.activeFile.value]['content'].length -
           editController.fileList[editController.activeFile.value]['activeLine'] >
-      (MediaQuery.of(mainContext).size.height / (3.2 * globalController.globalFontSize.value))) {
+      (MediaQuery.of(mainContext).size.height / (3.5 * editController.fontSize.value))) {
     if (i <
         editController.fileList[editController.activeFile.value]['activeLine'] +
             (MediaQuery.of(mainContext).size.height /
-                (3.2 * globalController.globalFontSize.value))) {
+                (3.5 * editController.fontSize.value))) {
       return true;
     } else {
       return false;
@@ -156,12 +188,11 @@ void activeLineDecrement() {
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
-  
+
   //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
   if (textEditControl.text.length < cursorPosition) {
     textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length,
-        extentOffset: textEditControl.text.length);
+        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
   } else {
     textEditControl.selection =
         TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
@@ -175,12 +206,11 @@ void activeLineIncrement() {
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
-  
+
   //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
   if (textEditControl.text.length < cursorPosition) {
     textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length,
-        extentOffset: textEditControl.text.length);
+        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
   } else {
     textEditControl.selection =
         TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
