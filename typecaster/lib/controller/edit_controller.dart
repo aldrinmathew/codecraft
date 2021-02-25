@@ -1,7 +1,8 @@
 import 'package:get/state_manager.dart';
 
 class EditController extends GetxController {
-  RxDouble fontSize = 20.0.obs;
+  RxDouble fontSize = 14.0.obs;
+  RxDouble editFontSize = 25.0.obs;
   RxBool editMode = false.obs;
   RxString cacheText = ''.obs;
   RxInt activeFile = 0.obs;
