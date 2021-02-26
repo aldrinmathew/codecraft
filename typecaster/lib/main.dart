@@ -11,8 +11,55 @@ import './functions.dart';
 import '../controller/color_controller.dart';
 import '../controller/edit_controller.dart';
 
-void main() {
+Directory directory;
+List<Map<String, String>> directoryContents = [];
+bool previousOpen = false;
+
+void main(List<String> arguments) {
   Intl.defaultLocale = 'en_BR';
+
+  if (arguments.length == 0) {
+    directory = Directory('');
+  } else {
+    directory = Directory(arguments[0]);
+  }
+
+  List<FileSystemEntity> contents = directory.listSync(recursive: false);
+  for (int i = 0; i < contents.length; i++) {
+    FileSystemEntity element = contents[i];
+    if (element is File) {
+      if (directory.path == '') {
+        directoryContents.add({
+          'path': element.path.substring(2),
+          'type': 'File',
+        });
+      } else {
+        directoryContents.add({
+          'path': element.path,
+          'type': 'File',
+        });
+      }
+    } else if (element is Directory) {
+      if (directory.path == '') {
+        directoryContents.add({
+          'path': element.path.substring(2),
+          'type': 'Folder',
+        });
+        if (element.path.substring(2) == '.typecaster') {
+          previousOpen = true;
+        }
+      } else {
+        directoryContents.add({
+          'path': element.path,
+          'type': 'Folder',
+        });
+        if (element.path == '.typecaster') {
+          previousOpen = true;
+        }
+      }
+    }
+  }
+  
   runApp(TypeCaster());
 }
 
