@@ -358,14 +358,13 @@ class _HomeViewState extends State<HomeView> {
                         if (downLineCandidate()) {
                           activeLineIncrement();
                         }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyO)) {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
                         editController.fontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyQ)) {
                         exit(0);
-                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
-                        colorController.darkModeChanger();
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {
@@ -417,6 +416,8 @@ class _HomeViewState extends State<HomeView> {
                         editController.editFontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
                         editController.editFontSize.value--;
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
+                        colorController.darkModeChanger();
                       }
                     }
                   },
