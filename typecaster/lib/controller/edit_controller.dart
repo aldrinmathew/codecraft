@@ -12,12 +12,15 @@ class EditController extends GetxController {
       'fileID': 1,
       'fileName': 'Untitled 1',
       'activeLine': 0,
+      'path': '',
       'saved': false,
     },
   ];
   List<Map<String, List<String>>> fileContent = [
     {
-      'content': ['',],
-    }
+      'content': [
+        '',
+      ],
+    },
   ];
 }

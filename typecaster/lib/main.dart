@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,8 @@ void main(List<String> arguments) {
 
   if (arguments.length == 0) {
     directory = Directory('');
+  } else if (arguments[0] == '.') {
+    directory = Directory.current;
   } else {
     directory = Directory(arguments[0]);
   }
@@ -59,7 +62,7 @@ void main(List<String> arguments) {
       }
     }
   }
-  
+
   runApp(TypeCaster());
 }
 
@@ -119,6 +122,18 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  AlertDialog newFileDialog = AlertDialog(
+    backgroundColor: colorController.bgColor.value,
+    content: TextField(
+      enabled: true,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+      ),
+    ),
+    contentPadding: EdgeInsets.zero,
+    titlePadding: EdgeInsets.zero,
+  );
+
   void initState() {
     homeViewFocusNode = FocusNode(
       canRequestFocus: true,
@@ -139,6 +154,40 @@ class _HomeViewState extends State<HomeView> {
     globalTimer.onExecute.add(StopWatchExecute.stop);
     await globalTimer.dispose();
     super.dispose();
+  }
+
+  Widget openFiles(BuildContext mainContext) {
+    return Positioned(
+      top: 0.0,
+      left: 0.0,
+      child: Container(
+        child: Row(
+          children: [
+            for (int i = 0; i < editController.fileList.length; i++)
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.all(5),
+                child: Text(
+                  editController.fileList[i]['fileName'],
+                  style: TextStyle(
+                    color: colorController.bgColorContrast.value
+                        .withOpacity((editController.activeFile.value == i) ? (0.6) : (0.3)),
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                    color: colorController.bgColor.value,
+                    borderRadius: BorderRadius.circular(7),
+                    border: Border.all(
+                        color: colorController.bgColorContrast.value
+                            .withOpacity((editController.activeFile.value == i) ? (0.1) : (0.0)),
+                        width: 2.0)),
+              )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget editPanel(BuildContext mainContext) {
@@ -322,6 +371,7 @@ class _HomeViewState extends State<HomeView> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
+                      openFiles(mainContext),
                       if (editController.editMode.value) editPanel(mainContext),
                       if (editController.editMode.value)
                         Row(
@@ -405,7 +455,7 @@ class _HomeViewState extends State<HomeView> {
                         if (downLineCandidate()) {
                           activeLineIncrement();
                         }
-                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyO)) {
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
@@ -475,6 +525,22 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       );
+    });
+  }
+
+  void createNewFile() {
+    editController.fileList.add({
+      'fileID': editController.fileList[editController.fileList.length - 1]['fileID'] + 1,
+      'fileName':
+          'Untitled ${editController.fileList[editController.fileList.length - 1]['fileID'] + 1}',
+      'activeLine': 0,
+      'path': '',
+      'saved': false,
+    });
+    editController.fileContent.add({
+      'contents': [
+        '',
+      ],
     });
   }
 }
