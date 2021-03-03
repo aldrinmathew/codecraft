@@ -36,11 +36,39 @@ Widget statusBar(BuildContext mainContext) {
             ],
           ),
         ),
-        Icon(
-                (colorController.isDarkMode.value) ? (Icons.lightbulb_outline) : (Icons.lightbulb),
-                size: 12,
-                color: colorController.bgColorContrast.value,
-              ),
+        Row(
+          children: [
+            Icon(
+              Icons.keyboard,
+              size: 18,
+              color: colorController.bgColorContrast.value,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Icon(
+              (colorController.isDarkMode.value) ? (Icons.lightbulb_outline) : (Icons.lightbulb),
+              size: 13,
+              color: colorController.bgColorContrast.value,
+            ),
+          ],
+        ),
+        Text(
+          (editController.fileList[editController.activeFile.value]['endofline'] == 'system')
+              ? (editController.endOfLine.value)
+              : ((editController.fileList[editController.activeFile.value]['endofline'] !=
+                      editController.endOfLine.value)
+                  ? (editController.fileList[editController.activeFile.value]['endofline'] +
+                      ' | ' +
+                      editController.endOfLine.value)
+                  : (editController.endOfLine.value)),
+          style: TextStyle(
+            color: colorController.bgColorContrast.value,
+            fontFamily: fontFamily,
+            fontWeight: FontWeight.normal,
+            fontSize: 12,
+          ),
+        ),
         Container(
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Text(

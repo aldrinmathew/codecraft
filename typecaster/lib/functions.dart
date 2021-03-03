@@ -140,8 +140,7 @@ bool lowerSectionLoopCandidate(BuildContext mainContext, int i) {
       (MediaQuery.of(mainContext).size.height / (3.5 * editController.fontSize.value))) {
     if (i <
         editController.fileList[editController.activeFile.value]['activeLine'] +
-            (MediaQuery.of(mainContext).size.height /
-                (3.5 * editController.fontSize.value))) {
+            (MediaQuery.of(mainContext).size.height / (3.5 * editController.fontSize.value))) {
       return true;
     } else {
       return false;
@@ -181,10 +180,32 @@ bool downLineCandidate() {
   }
 }
 
-/// Changes the active Line to the previous line and changes the value of the editable text.
-void activeLineDecrement() {
+/// Changes the active Line to the previous lines based on the decrement factor and changes the value of the editable text.
+void activeLineDecrement(int decrementFactor) {
   int cursorPosition = textEditControl.selection.start;
-  editController.fileList[editController.activeFile.value]['activeLine'] -= 1;
+  if ((editController.fileList[editController.activeFile.value]['activeLine'] - decrementFactor) >=
+      0) {
+    editController.fileList[editController.activeFile.value]['activeLine'] -= decrementFactor;
+    textEditControl = TextEditingController(
+        text: editController.fileContent[editController.activeFile.value]['content']
+            [editController.fileList[editController.activeFile.value]['activeLine']]);
+
+    //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
+    if (textEditControl.text.length < cursorPosition) {
+      textEditControl.selection = TextSelection(
+          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    } else {
+      textEditControl.selection =
+          TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+    }
+  } else {
+    gotoFirstLine();
+  }
+}
+
+void gotoFirstLine() {
+  int cursorPosition = textEditControl.selection.start;
+  editController.fileList[editController.activeFile.value]['activeLine'] = 0;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
@@ -200,9 +221,32 @@ void activeLineDecrement() {
 }
 
 /// Changes the active Line to the next line and changes the value of the editable text.
-void activeLineIncrement() {
+void activeLineIncrement(int incrementFactor) {
   int cursorPosition = textEditControl.selection.start;
-  editController.fileList[editController.activeFile.value]['activeLine'] += 1;
+  if ((editController.fileList[editController.activeFile.value]['activeLine'] + incrementFactor) <
+      editController.fileContent[editController.activeFile.value]['content'].length) {
+    editController.fileList[editController.activeFile.value]['activeLine'] += incrementFactor;
+    textEditControl = TextEditingController(
+        text: editController.fileContent[editController.activeFile.value]['content']
+            [editController.fileList[editController.activeFile.value]['activeLine']]);
+
+    //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
+    if (textEditControl.text.length < cursorPosition) {
+      textEditControl.selection = TextSelection(
+          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    } else {
+      textEditControl.selection =
+          TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+    }
+  } else {
+    gotoLastLine();
+  }
+}
+
+void gotoLastLine() {
+  int cursorPosition = textEditControl.selection.start;
+  editController.fileList[editController.activeFile.value]['activeLine'] =
+      editController.fileContent[editController.activeFile.value]['content'].length - 1;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
@@ -351,4 +395,16 @@ String lineCharacterCount() {
             .toString() +
         ' Ch');
   }
+}
+
+void endOfLineChange() {
+  if (editController.endOfLine.value == 'LF') {
+    editController.endOfLine.value = 'CRLF';
+  } else {
+    editController.endOfLine.value = 'LF';
+  }
+}
+
+void fileEndOfLineChange(String eol) {
+  editController.fileList[editController.activeFile.value]['endofline'] = eol;
 }

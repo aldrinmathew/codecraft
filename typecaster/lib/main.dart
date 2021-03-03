@@ -73,6 +73,7 @@ GlobalController globalController = GlobalController();
 TextEditingController textEditControl;
 FocusNode editTextFocusNode;
 FocusNode homeViewFocusNode;
+FocusNode newFileNameFocusNode;
 StopWatchTimer editModeTimer = StopWatchTimer(
   onChange: (value) {
     String displayTime = StopWatchTimer.getDisplayTime(value);
@@ -105,7 +106,7 @@ StopWatchTimer globalTimer = StopWatchTimer(
 class TypeCaster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Typecaster',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -144,6 +145,10 @@ class _HomeViewState extends State<HomeView> {
       canRequestFocus: true,
       descendantsAreFocusable: false,
     );
+    newFileNameFocusNode = FocusNode(
+      canRequestFocus: true,
+      descendantsAreFocusable: false,
+    );
     textEditControl = TextEditingController(text: '');
     globalTimer.onExecute.add(StopWatchExecute.start);
     super.initState();
@@ -171,7 +176,7 @@ class _HomeViewState extends State<HomeView> {
                   editController.fileList[i]['fileName'],
                   style: TextStyle(
                     color: colorController.bgColorContrast.value
-                        .withOpacity((editController.activeFile.value == i) ? (0.6) : (0.3)),
+                        .withOpacity((editController.activeFile.value == i) ? (0.5) : (0.3)),
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.bold,
                   ),
@@ -182,7 +187,7 @@ class _HomeViewState extends State<HomeView> {
                     border: Border.all(
                         color: colorController.bgColorContrast.value
                             .withOpacity((editController.activeFile.value == i) ? (0.1) : (0.0)),
-                        width: 2.0)),
+                        width: 1.5)),
               )
           ],
         ),
@@ -449,11 +454,11 @@ class _HomeViewState extends State<HomeView> {
                         editController.editMode.value = !(editController.editMode.value);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
                         if (upLineCandidate()) {
-                          activeLineDecrement();
+                          activeLineDecrement(1);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
                         if (downLineCandidate()) {
-                          activeLineIncrement();
+                          activeLineIncrement(1);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
@@ -462,6 +467,14 @@ class _HomeViewState extends State<HomeView> {
                         editController.fontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyQ)) {
                         exit(0);
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                        if (upLineCandidate()) {
+                          activeLineDecrement(5);
+                        }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+                        if (downLineCandidate()) {
+                          activeLineIncrement(5);
+                        }
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {
@@ -477,11 +490,11 @@ class _HomeViewState extends State<HomeView> {
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
                       if (upLineCandidate()) {
-                        activeLineDecrement();
+                        activeLineDecrement(1);
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
                       if (downLineCandidate()) {
-                        activeLineIncrement();
+                        activeLineIncrement(1);
                       }
                     } else if ((keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) &&
                         (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT))) {
@@ -514,7 +527,17 @@ class _HomeViewState extends State<HomeView> {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
                         editController.editFontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
-                        colorController.darkModeChanger();
+                        setState(() {
+                          colorController.darkModeChanger();
+                        });
+                      }
+                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
+                      if (upLineCandidate()) {
+                        gotoFirstLine();
+                      }
+                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
+                      if (downLineCandidate()) {
+                        gotoLastLine();
                       }
                     }
                   },
@@ -528,11 +551,12 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void createNewFile() {
+  void createNewFile({String filename = ''}) {
     editController.fileList.add({
       'fileID': editController.fileList[editController.fileList.length - 1]['fileID'] + 1,
-      'fileName':
-          'Untitled ${editController.fileList[editController.fileList.length - 1]['fileID'] + 1}',
+      'fileName': (filename == '')
+          ? ('Untitled ${editController.fileList[editController.fileList.length - 1]['fileID'] + 1}')
+          : (filename),
       'activeLine': 0,
       'path': '',
       'saved': false,

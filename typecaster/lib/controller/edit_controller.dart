@@ -7,12 +7,14 @@ class EditController extends GetxController {
   RxString cacheText = ''.obs;
   RxInt activeFile = 0.obs;
   RxString editModeTime = ''.obs;
+  RxString endOfLine = 'LF'.obs;
   List<Map<String, dynamic>> fileList = [
     {
       'fileID': 1,
       'fileName': 'Untitled 1',
       'activeLine': 0,
       'path': '',
+      'endofline': 'system',
       'saved': false,
     },
   ];
