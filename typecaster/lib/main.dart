@@ -461,6 +461,39 @@ class _HomeViewState extends State<HomeView> {
                           activeLineIncrement(1);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
+                        Get.defaultDialog(
+                          backgroundColor: colorController.bgColor.value,
+                          title: 'New File',
+                          titleStyle: TextStyle(
+                            color: colorController.bgColorContrast.value,
+                            fontFamily: fontFamily,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                          content: RawKeyboardListener(
+                            focusNode: newFileNameFocusNode,
+                            child: Container(
+                              child: TextField(
+                                style: TextStyle(
+                                  color: colorController.bgColorContrast.value,
+                                  fontFamily: fontFamily,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 15,
+                                ),
+                                cursorWidth: editController.fontSize.value / 1.7,
+                                decoration: null,
+                                onSubmitted: (filename) {
+                                  createNewFile(filename: filename);
+                                },
+                              ),
+                            ),
+                            onKey: (keyEvent) {
+                              if (keyEvent.isKeyPressed(LogicalKeyboardKey.escape)) {
+                                Get.back();
+                              }
+                            },
+                          ),
+                        );
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
