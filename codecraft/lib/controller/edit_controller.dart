@@ -12,9 +12,11 @@ class EditController extends GetxController {
     {
       'fileID': 1,
       'fileName': 'Untitled 1',
+      'extension': '',
       'activeLine': 0,
       'path': '',
       'endofline': 'system',
+      'encoding':'',
       'saved': false,
     },
   ];

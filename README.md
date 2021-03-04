@@ -1,6 +1,6 @@
 ![](resources/images/raster/logo.png)
 
-Welcome to **typecaster**, a simple code editor that helps you to focus on lines that matter.
+Welcome to **codecraft**, a simple code editor that helps you to focus on lines that matter.
 
 > **This project runs entirely on donations. Consider a donation if this project proves to be useful to you.**
 

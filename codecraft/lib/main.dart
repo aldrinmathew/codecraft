@@ -48,7 +48,7 @@ void main(List<String> arguments) {
           'path': element.path.substring(2),
           'type': 'Folder',
         });
-        if (element.path.substring(2) == '.typecaster') {
+        if (element.path.substring(2) == '.codecraft') {
           previousOpen = true;
         }
       } else {
@@ -56,14 +56,14 @@ void main(List<String> arguments) {
           'path': element.path,
           'type': 'Folder',
         });
-        if (element.path == '.typecaster') {
+        if (element.path == '.codecraft') {
           previousOpen = true;
         }
       }
     }
   }
 
-  runApp(TypeCaster());
+  runApp(CodeCraft());
 }
 
 String fontFamily = "FiraCode";
@@ -103,11 +103,11 @@ StopWatchTimer globalTimer = StopWatchTimer(
   },
 );
 
-class TypeCaster extends StatelessWidget {
+class CodeCraft extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Typecaster',
+      title: 'Codecraft',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: colorController.appStyleColor,

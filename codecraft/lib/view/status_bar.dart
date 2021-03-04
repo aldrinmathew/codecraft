@@ -16,7 +16,7 @@ Widget statusBar(BuildContext mainContext) {
           child: Row(
             children: [
               Text(
-                'typecaster',
+                'codecraft',
                 style: TextStyle(
                   color: colorController.bgColorContrast.value,
                   fontFamily: fontFamily,
