@@ -410,3 +410,21 @@ void createNewFile(String filename) {
   editController.cacheText.value = '';
   textEditControl = TextEditingController(text: editController.cacheText.value);
 }
+
+void previousFile() {
+  if (editController.activeFile.value > 0) {
+    editController.activeFile.value--;
+    editController.cacheText.value = editController.fileContent[editController.activeFile.value]
+        ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
+    textEditControl = TextEditingController(text: editController.cacheText.value);
+  }
+}
+
+void nextFile() {
+  if (editController.activeFile.value < editController.fileList.length - 1) {
+    editController.activeFile.value++;
+    editController.cacheText.value = editController.fileContent[editController.activeFile.value]
+        ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
+    textEditControl = TextEditingController(text: editController.cacheText.value);
+  }
+}

@@ -217,7 +217,8 @@ class _HomeViewState extends State<HomeView> {
                           if (editController.activeFile.value == i)
                             BoxShadow(
                               blurRadius: 3,
-                              color: colorController.contrastExtreme.value.withOpacity((colorController.isDarkMode.value)?(0.2):(0.8)),
+                              color: colorController.contrastExtreme.value
+                                  .withOpacity((colorController.isDarkMode.value) ? (0.2) : (0.8)),
                               offset: (colorController.isDarkMode.value)
                                   ? (Offset(3, 3))
                                   : (Offset(-3, -3)),
@@ -668,7 +669,9 @@ class _HomeViewState extends State<HomeView> {
                           colorController.darkModeChanger();
                         });
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+                        previousFile();
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+                        nextFile();
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
                       if (upLineCandidate()) {
