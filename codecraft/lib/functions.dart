@@ -186,26 +186,9 @@ void activeLineDecrement(int decrementFactor) {
   if ((editController.fileList[editController.activeFile.value]['activeLine'] - decrementFactor) >=
       0) {
     editController.fileList[editController.activeFile.value]['activeLine'] -= decrementFactor;
-    textEditControl = TextEditingController(
-        text: editController.fileContent[editController.activeFile.value]['content']
-            [editController.fileList[editController.activeFile.value]['activeLine']]);
-
-    //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
-    if (textEditControl.text.length < cursorPosition) {
-      textEditControl.selection = TextSelection(
-          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
-    } else {
-      textEditControl.selection =
-          TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
-    }
   } else {
-    gotoFirstLine();
+    editController.fileList[editController.activeFile.value]['activeLine'] = 0;
   }
-}
-
-void gotoFirstLine() {
-  int cursorPosition = textEditControl.selection.start;
-  editController.fileList[editController.activeFile.value]['activeLine'] = 0;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
@@ -226,27 +209,10 @@ void activeLineIncrement(int incrementFactor) {
   if ((editController.fileList[editController.activeFile.value]['activeLine'] + incrementFactor) <
       editController.fileContent[editController.activeFile.value]['content'].length) {
     editController.fileList[editController.activeFile.value]['activeLine'] += incrementFactor;
-    textEditControl = TextEditingController(
-        text: editController.fileContent[editController.activeFile.value]['content']
-            [editController.fileList[editController.activeFile.value]['activeLine']]);
-
-    //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
-    if (textEditControl.text.length < cursorPosition) {
-      textEditControl.selection = TextSelection(
-          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
-    } else {
-      textEditControl.selection =
-          TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
-    }
   } else {
-    gotoLastLine();
+    editController.fileList[editController.activeFile.value]['activeLine'] =
+        editController.fileContent[editController.activeFile.value]['content'].length - 1;
   }
-}
-
-void gotoLastLine() {
-  int cursorPosition = textEditControl.selection.start;
-  editController.fileList[editController.activeFile.value]['activeLine'] =
-      editController.fileContent[editController.activeFile.value]['content'].length - 1;
   textEditControl = TextEditingController(
       text: editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']]);
@@ -405,6 +371,42 @@ void endOfLineChange() {
   }
 }
 
-void fileEndOfLineChange(String eol) {
-  editController.fileList[editController.activeFile.value]['endofline'] = eol;
+void fileendOfLineChange(String eol) {
+  editController.fileList[editController.activeFile.value]['endOfLine'] = eol;
+}
+
+void createNewFile(String filename) {
+  String fileExtension = '';
+  if (filename == '') {
+    filename = 'Untitled';
+  } else {
+    if (filename.contains('.')) {
+      List<String> fileNameContent = filename.split('.');
+      filename = '';
+      for (int i = 0; i < (fileNameContent.length - 1); i++) {
+        filename += fileNameContent[i];
+      }
+      fileExtension = fileNameContent[fileNameContent.length - 1];
+    }
+  }
+  int fileID = editController.fileList[editController.fileList.length - 1]['fileID'] + 1;
+  Map<String, dynamic> newFile = {
+    'fileID': fileID,
+    'fileName': filename,
+    'extension': fileExtension,
+    'activeLine': 0,
+    'path': '',
+    'endOfLine': editController.endOfLine.value,
+    'encoding': 'text',
+    'saved': false,
+  };
+  Map<String, List<String>> newFileContent = {
+    'content': [
+      '',
+    ],
+  };
+  editController.fileList.insert(editController.activeFile.value + 1, newFile);
+  editController.fileContent.insert(editController.activeFile.value + 1, newFileContent);
+  editController.cacheText.value = '';
+  textEditControl = TextEditingController(text: editController.cacheText.value);
 }

@@ -54,11 +54,11 @@ Widget statusBar(BuildContext mainContext) {
           ],
         ),
         Text(
-          (editController.fileList[editController.activeFile.value]['endofline'] == 'system')
+          (editController.fileList[editController.activeFile.value]['endOfLine'] == 'system')
               ? (editController.endOfLine.value)
-              : ((editController.fileList[editController.activeFile.value]['endofline'] !=
+              : ((editController.fileList[editController.activeFile.value]['endOfLine'] !=
                       editController.endOfLine.value)
-                  ? (editController.fileList[editController.activeFile.value]['endofline'] +
+                  ? (editController.fileList[editController.activeFile.value]['endOfLine'] +
                       ' | ' +
                       editController.endOfLine.value)
                   : (editController.endOfLine.value)),

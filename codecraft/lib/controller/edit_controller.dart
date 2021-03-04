@@ -11,11 +11,11 @@ class EditController extends GetxController {
   List<Map<String, dynamic>> fileList = [
     {
       'fileID': 1,
-      'fileName': 'Untitled 1',
+      'fileName': 'Welcome',
       'extension': '',
       'activeLine': 0,
       'path': '',
-      'endofline': 'system',
+      'endOfLine': 'system',
       'encoding':'',
       'saved': false,
     },

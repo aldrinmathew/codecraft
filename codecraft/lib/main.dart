@@ -74,6 +74,7 @@ TextEditingController textEditControl;
 FocusNode editTextFocusNode;
 FocusNode homeViewFocusNode;
 FocusNode newFileNameFocusNode;
+TextEditingController newFileNameController;
 StopWatchTimer editModeTimer = StopWatchTimer(
   onChange: (value) {
     String displayTime = StopWatchTimer.getDisplayTime(value);
@@ -170,24 +171,72 @@ class _HomeViewState extends State<HomeView> {
           children: [
             for (int i = 0; i < editController.fileList.length; i++)
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                padding: EdgeInsets.all(5),
-                child: Text(
-                  editController.fileList[i]['fileName'],
-                  style: TextStyle(
-                    color: colorController.bgColorContrast.value
-                        .withOpacity((editController.activeFile.value == i) ? (0.5) : (0.3)),
-                    fontFamily: fontFamily,
-                    fontWeight: FontWeight.bold,
-                  ),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      child: Row(
+                        children: [
+                          if (editController.activeFile.value == i)
+                            Icon(
+                              Icons.file_present,
+                              size: 15,
+                              color: colorController.bgColorContrast.value.withOpacity(
+                                  (editController.activeFile.value == i) ? (0.5) : (0.3)),
+                            ),
+                          Text(
+                            (editController.fileList[i]['extension'] == '')
+                                ? (editController.fileList[i]['fileName'])
+                                : (editController.fileList[i]['fileName'] +
+                                    '.' +
+                                    editController.fileList[i]['extension']),
+                            style: TextStyle(
+                              color: colorController.bgColorContrast.value.withOpacity(
+                                  (editController.activeFile.value == i) ? (0.8) : (0.5)),
+                              fontFamily: fontFamily,
+                              fontWeight: (editController.activeFile.value == i)
+                                  ? (FontWeight.bold)
+                                  : (FontWeight.normal),
+                            ),
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorController.bgColor.value,
+                        borderRadius: BorderRadius.circular(7),
+                        boxShadow: [
+                          if (editController.activeFile.value == i)
+                            BoxShadow(
+                              blurRadius: 3,
+                              color: colorController.bgColorContrast.value.withOpacity(0.1),
+                              offset: (colorController.isDarkMode.value)
+                                  ? (Offset(-3, -3))
+                                  : (Offset(3, 3)),
+                            ),
+                          if (editController.activeFile.value == i)
+                            BoxShadow(
+                              blurRadius: 3,
+                              color: colorController.contrastExtreme.value.withOpacity((colorController.isDarkMode.value)?(0.2):(0.8)),
+                              offset: (colorController.isDarkMode.value)
+                                  ? (Offset(3, 3))
+                                  : (Offset(-3, -3)),
+                            )
+                        ],
+                      ),
+                    ),
+                    if (!(editController.fileList[i]['saved']))
+                      Positioned(
+                        top: 0.0,
+                        right: 0.0,
+                        child: Icon(
+                          Icons.circle,
+                          size: 12,
+                          color: colorController.bgColorContrast.value,
+                        ),
+                      ),
+                  ],
                 ),
-                decoration: BoxDecoration(
-                    color: colorController.bgColor.value,
-                    borderRadius: BorderRadius.circular(7),
-                    border: Border.all(
-                        color: colorController.bgColorContrast.value
-                            .withOpacity((editController.activeFile.value == i) ? (0.1) : (0.0)),
-                        width: 1.5)),
               )
           ],
         ),
@@ -463,35 +512,90 @@ class _HomeViewState extends State<HomeView> {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
                         Get.defaultDialog(
                           backgroundColor: colorController.bgColor.value,
-                          title: 'New File',
+                          radius: 30.0,
+                          title: '',
                           titleStyle: TextStyle(
-                            color: colorController.bgColorContrast.value,
+                            color: colorController.bgColorContrast.value.withOpacity(0.8),
                             fontFamily: fontFamily,
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 0.01,
                           ),
-                          content: RawKeyboardListener(
-                            focusNode: newFileNameFocusNode,
-                            child: Container(
-                              child: TextField(
-                                style: TextStyle(
-                                  color: colorController.bgColorContrast.value,
-                                  fontFamily: fontFamily,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15,
-                                ),
-                                cursorWidth: editController.fontSize.value / 1.7,
-                                decoration: null,
-                                onSubmitted: (filename) {
-                                  createNewFile(filename: filename);
-                                },
+                          content: Container(
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                            child: RawKeyboardListener(
+                              focusNode: newFileNameFocusNode,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.file_present,
+                                    size: 40,
+                                    color: colorController.bgColorContrast.value.withOpacity(0.5),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    width: 200,
+                                    alignment: Alignment.center,
+                                    child: TextField(
+                                      controller: newFileNameController,
+                                      textAlign: TextAlign.center,
+                                      textAlignVertical: TextAlignVertical.center,
+                                      autofocus: true,
+                                      cursorWidth: editController.editFontSize.value / 1.7,
+                                      cursorColor: colorController.bgColorContrast.value,
+                                      cursorHeight: 27,
+                                      style: TextStyle(
+                                        color: colorController.bgColorContrast.value,
+                                        fontFamily: fontFamily,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: editController.fontSize.value * 1.4,
+                                      ),
+                                      decoration: null,
+                                      onSubmitted: (filename) {
+                                        createNewFile(filename);
+                                        Get.back();
+                                        editController.activeFile.value += 1;
+                                      },
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: colorController.bgColorContrast.value.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(15),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          offset: (colorController.isDarkMode.value)
+                                              ? (Offset(-5, -5))
+                                              : (Offset(5, 5)),
+                                          color: colorController.contrastExtreme.value.withOpacity(
+                                              (colorController.isDarkMode.value) ? 0.5 : 1),
+                                          blurRadius: 10,
+                                        ),
+                                        BoxShadow(
+                                          offset: (colorController.isDarkMode.value)
+                                              ? (Offset(5, 5))
+                                              : (Offset(-5, -5)),
+                                          color: colorController.bgColorContrast.value
+                                              .withOpacity(0.1),
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
+                              onKey: (keyEvent) {
+                                if (keyEvent.isKeyPressed(LogicalKeyboardKey.escape)) {
+                                  Get.back();
+                                } else if ((keyEvent.isControlPressed)) {
+                                  if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
+                                    Get.back();
+                                  }
+                                }
+                              },
                             ),
-                            onKey: (keyEvent) {
-                              if (keyEvent.isKeyPressed(LogicalKeyboardKey.escape)) {
-                                Get.back();
-                              }
-                            },
                           ),
                         );
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
@@ -563,14 +667,20 @@ class _HomeViewState extends State<HomeView> {
                         setState(() {
                           colorController.darkModeChanger();
                         });
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
                       if (upLineCandidate()) {
-                        gotoFirstLine();
+                        activeLineDecrement(editController
+                                .fileContent[editController.activeFile.value]['content'].length -
+                            1); // Passing a large value which is one less than the length of the array, so that it will go to the first line
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
                       if (downLineCandidate()) {
-                        gotoLastLine();
+                        activeLineIncrement(editController
+                                .fileContent[editController.activeFile.value]['content'].length -
+                            1); // Passing a large value which is one less than the length of the array, so that it will go to the last line
                       }
                     }
                   },
@@ -581,23 +691,6 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       );
-    });
-  }
-
-  void createNewFile({String filename = ''}) {
-    editController.fileList.add({
-      'fileID': editController.fileList[editController.fileList.length - 1]['fileID'] + 1,
-      'fileName': (filename == '')
-          ? ('Untitled ${editController.fileList[editController.fileList.length - 1]['fileID'] + 1}')
-          : (filename),
-      'activeLine': 0,
-      'path': '',
-      'saved': false,
-    });
-    editController.fileContent.add({
-      'contents': [
-        '',
-      ],
     });
   }
 }
