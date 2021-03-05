@@ -63,6 +63,8 @@ void main(List<String> arguments) {
     }
   }
 
+  editController.fileList[editController.activeFile.value]['path'] = directory.path;
+
   runApp(CodeCraft());
 }
 
@@ -613,6 +615,8 @@ class _HomeViewState extends State<HomeView> {
                         if (downLineCandidate()) {
                           activeLineIncrement(5);
                         }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
+                        saveFile();
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {

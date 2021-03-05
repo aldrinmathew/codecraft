@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import './main.dart';
@@ -23,6 +25,7 @@ void textChange(String text) {
   editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']] =
       editController.cacheText.value;
+  editController.fileList[editController.activeFile.value]['saved'] = false;
 }
 
 void textSubmit(String text) {
@@ -70,6 +73,7 @@ void textSubmit(String text) {
     textEditControl.selection = TextSelection(baseOffset: 0, extentOffset: 0);
     editTextFocusNode.requestFocus();
   }
+  editController.fileList[editController.activeFile.value]['saved'] = false;
 }
 
 String lineNumber(int i) {
@@ -427,4 +431,35 @@ void nextFile() {
         ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
     textEditControl = TextEditingController(text: editController.cacheText.value);
   }
+}
+
+void saveFile() {
+  File saveFile;
+  if (editController.fileList[editController.activeFile.value]['extension'] != '') {
+    saveFile = File(directory.path +
+        editController.fileList[editController.activeFile.value]['fileName'] +
+        '.' +
+        editController.fileList[editController.activeFile.value]['extension']);
+  } else {
+    saveFile =
+        File(directory.path + editController.fileList[editController.activeFile.value]['fileName']);
+  }
+  String fileContent = '';
+  for (int i = 0;
+      i < editController.fileContent[editController.activeFile.value]['content'].length;
+      i++) {
+    fileContent += (editController.fileContent[editController.activeFile.value]['content'][i]);
+    if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'system') {
+      if (i !=
+          (editController.fileContent[editController.activeFile.value]['content'].length - 1)) {
+        if (editController.endOfLine.value == 'LF') {
+          fileContent += '\n';
+        } else {
+          fileContent += '\r\n';
+        }
+      }
+    }
+  }
+  saveFile.writeAsString(fileContent, mode: FileMode.write);
+  editController.fileList[editController.activeFile.value]['saved'] = true;
 }
