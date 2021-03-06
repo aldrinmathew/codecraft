@@ -29,4 +29,9 @@ class EditController extends GetxController {
       ],
     },
   ];
+  RxDouble typingSpeed = 0.0.obs;
+  RxInt wordCount = 0.obs;
+  RxBool isAlphaNum = false.obs;
+  RxInt characterCount = 0.obs;
+  RxInt errorCount = 0.obs;
 }

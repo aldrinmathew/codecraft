@@ -161,6 +161,9 @@ class SaveFileScreen extends StatelessWidget {
                         decoration: null,
                         onSubmitted: (filePath) {
                           if (filePath != '') {
+                            if (filePath[filePath.length - 1] != '/') {
+                              filePath += '/';
+                            }
                             saveController.saveFilePath.value = filePath;
                             saveNewFile();
                             Get.back();

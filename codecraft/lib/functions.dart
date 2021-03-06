@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:codecraft/view/save_file.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 import './main.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -28,6 +29,22 @@ void textChange(String text) {
     editController.characterChange.value = 0;
     autosave();
   }
+  String alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVW0123456789abcdefghijklmnopqrstuvwxyz";
+  if (text.length != 0 && (textEditControl.selection.start != 0)) {
+    if (!(alphanumeric.contains(
+        text.substring(textEditControl.selection.start - 1, textEditControl.selection.start)))) {
+      if (editController.isAlphaNum.value) {
+        editController.wordCount.value++;
+        print(editController.wordCount.value);
+        editController.isAlphaNum.value = false;
+      }
+    } else {
+      editController.isAlphaNum.value = true;
+    }
+  }
+  if (editController.cacheText.value.length < text.length) {
+    editController.characterCount.value++;
+  }
   editController.cacheText.value = text;
   editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']] =
@@ -36,6 +53,7 @@ void textChange(String text) {
 }
 
 void textSubmit(String text) {
+  editController.wordCount.value++;
   if (textEditControl.selection.start == textEditControl.selection.end) {
     if (textEditControl.selection.start == textEditControl.text.length) {
       editController.fileContent[editController.activeFile.value]['content']

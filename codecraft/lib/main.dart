@@ -22,9 +22,9 @@ void main(List<String> arguments) {
   Intl.defaultLocale = 'en_BR';
 
   if (arguments.length == 0) {
-    directory = Directory.current;
+    directory = Directory(Directory.current.path + '/');
   } else if (arguments[0] == '.') {
-    directory = Directory.current;
+    directory = Directory(Directory.current.path + '/');
   } else {
     directory = Directory(arguments[0]);
   }
@@ -491,6 +491,10 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   onKey: (keyEvent) async {
+                    if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace) &&
+                        editController.editMode.value) {
+                      editController.errorCount.value++;
+                    }
                     if (keyEvent.isControlPressed) {
                       if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
                         if (!(editController.editMode.value)) {
@@ -499,6 +503,17 @@ class _HomeViewState extends State<HomeView> {
                           editModeEnd();
                         }
                         editController.editMode.value = !(editController.editMode.value);
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
+                        if (editController.fileList[editController.activeFile.value]['onDisk']) {
+                          saveFilePrepare();
+                        } else {
+                          Get.to(SaveFileScreen(
+                            fileName: editController.fileList[editController.activeFile.value]
+                                ['fileName'],
+                            filePath: editController.fileList[editController.activeFile.value]
+                                ['path'],
+                          ));
+                        }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
                         if (upLineCandidate()) {
                           activeLineDecrement(1);
@@ -523,17 +538,8 @@ class _HomeViewState extends State<HomeView> {
                         if (downLineCandidate()) {
                           activeLineIncrement(5);
                         }
-                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
-                        if (editController.fileList[editController.activeFile.value]['onDisk']) {
-                          saveFilePrepare();
-                        } else {
-                          Get.to(SaveFileScreen(
-                            fileName: editController.fileList[editController.activeFile.value]
-                                ['fileName'],
-                            filePath: editController.fileList[editController.activeFile.value]
-                                ['path'],
-                          ));
-                        }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT)) {
+                        // Implementation yet to be done for Type Speed Practise Screen.
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {
