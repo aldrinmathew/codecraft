@@ -18,6 +18,7 @@ class EditController extends GetxController {
       'path': '',
       'endOfLine': 'system',
       'encoding': 'UTF-8',
+      'onDisk': false,
       'saved': false,
     },
   ];

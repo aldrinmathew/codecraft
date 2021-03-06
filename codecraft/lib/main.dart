@@ -8,6 +8,7 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:intl/intl.dart';
 import 'package:codecraft/view/status_bar.dart';
 import 'package:codecraft/view/new_file.dart';
+import 'package:codecraft/view/save_file.dart';
 import 'package:codecraft/controller/global_controller.dart';
 import 'package:codecraft/functions.dart';
 import 'package:codecraft/controller/color_controller.dart';
@@ -21,12 +22,14 @@ void main(List<String> arguments) {
   Intl.defaultLocale = 'en_BR';
 
   if (arguments.length == 0) {
-    directory = Directory('');
+    directory = Directory.current;
   } else if (arguments[0] == '.') {
     directory = Directory.current;
   } else {
     directory = Directory(arguments[0]);
   }
+
+  print(directory.path);
 
   List<FileSystemEntity> contents = directory.listSync(recursive: false);
   for (int i = 0; i < contents.length; i++) {
@@ -85,8 +88,6 @@ GlobalController globalController = GlobalController();
 TextEditingController textEditControl;
 FocusNode editTextFocusNode;
 FocusNode homeViewFocusNode;
-FocusNode newFileNameFocusNode;
-TextEditingController newFileNameController;
 StopWatchTimer editModeTimer = StopWatchTimer(
   onChange: (value) {
     String displayTime = StopWatchTimer.getDisplayTime(value);
@@ -523,7 +524,16 @@ class _HomeViewState extends State<HomeView> {
                           activeLineIncrement(5);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
-                        saveFile();
+                        if (editController.fileList[editController.activeFile.value]['onDisk']) {
+                          saveFilePrepare();
+                        } else {
+                          Get.to(SaveFileScreen(
+                            fileName: editController.fileList[editController.activeFile.value]
+                                ['fileName'],
+                            filePath: editController.fileList[editController.activeFile.value]
+                                ['path'],
+                          ));
+                        }
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {

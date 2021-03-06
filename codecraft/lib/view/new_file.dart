@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:codecraft/main.dart';
 import 'package:codecraft/functions.dart';
 
+FocusNode newFileNameFocusNode;
+TextEditingController newFileNameController;
+
 class NewFileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

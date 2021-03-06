@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:codecraft/view/save_file.dart';
 import 'package:flutter/material.dart';
 
 import './main.dart';
@@ -387,9 +388,7 @@ void fileendOfLineChange(String eol) {
 
 void createNewFile(String filename) {
   String fileExtension = '';
-  if (filename == '') {
-    filename = 'Untitled';
-  } else {
+  if (filename != '') {
     if (filename.contains('.')) {
       List<String> fileNameContent = filename.split('.');
       filename = '';
@@ -407,7 +406,8 @@ void createNewFile(String filename) {
     'activeLine': 0,
     'path': '',
     'endOfLine': 'system',
-    'encoding': 'UTF8',
+    'encoding': 'UTF-8',
+    'onDisk': false,
     'saved': true,
   };
   Map<String, List<String>> newFileContent = {
@@ -445,7 +445,7 @@ void nextFile() {
   }
 }
 
-void saveFile() {
+void saveFilePrepare() {
   File saveFile;
   if (editController.fileList[editController.activeFile.value]['extension'] != '') {
     saveFile = File(directory.path +
@@ -456,6 +456,11 @@ void saveFile() {
     saveFile =
         File(directory.path + editController.fileList[editController.activeFile.value]['fileName']);
   }
+  saveFileWrite(saveFile);
+  editController.fileList[editController.activeFile.value]['saved'] = true;
+}
+
+void saveFileWrite(File saveFile) {
   String fileContent = '';
   for (int i = 0;
       i < editController.fileContent[editController.activeFile.value]['content'].length;
@@ -484,6 +489,34 @@ void saveFile() {
     }
   }
   saveFile.writeAsString(fileContent, mode: FileMode.write);
+}
+
+void saveNewFile() {
+  String fileExtension = '';
+  if (saveController.saveFileName.value.contains('.')) {
+    List<String> fileNameContent = saveController.saveFileName.value.split('.');
+    saveController.saveFileName.value = '';
+    for (int i = 0; i < (fileNameContent.length - 1); i++) {
+      saveController.saveFileName.value += fileNameContent[i];
+    }
+    fileExtension = fileNameContent[fileNameContent.length - 1];
+  }
+  File saveFile;
+  if (fileExtension != '') {
+    saveFile = File(saveController.saveFilePath.value +
+        saveController.saveFileName.value +
+        '.' +
+        fileExtension);
+  } else {
+    saveFile = File(saveController.saveFilePath.value + saveController.saveFileName.value);
+  }
+  saveFileWrite(saveFile);
+  editController.fileList[editController.activeFile.value]['fileName'] =
+      saveController.saveFileName.value;
+  editController.fileList[editController.activeFile.value]['extension'] = fileExtension;
+  editController.fileList[editController.activeFile.value]['path'] =
+      saveController.saveFilePath.value;
+  editController.fileList[editController.activeFile.value]['onDisk'] = true;
   editController.fileList[editController.activeFile.value]['saved'] = true;
 }
 
