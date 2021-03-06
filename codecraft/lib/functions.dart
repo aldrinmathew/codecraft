@@ -408,7 +408,7 @@ void createNewFile(String filename) {
     'path': '',
     'endOfLine': 'system',
     'encoding': 'UTF8',
-    'saved': false,
+    'saved': true,
   };
   Map<String, List<String>> newFileContent = {
     'content': [
