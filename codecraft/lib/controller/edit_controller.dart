@@ -8,6 +8,7 @@ class EditController extends GetxController {
   RxInt activeFile = 0.obs;
   RxString editModeTime = ''.obs;
   RxString endOfLine = 'LF'.obs;
+  RxInt characterChange = 0.obs;
   List<Map<String, dynamic>> fileList = [
     {
       'fileID': 1,
@@ -16,7 +17,7 @@ class EditController extends GetxController {
       'activeLine': 0,
       'path': '',
       'endOfLine': 'system',
-      'encoding':'',
+      'encoding': 'UTF-8',
       'saved': false,
     },
   ];

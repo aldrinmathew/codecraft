@@ -21,6 +21,12 @@ void editModeEnd() {
 }
 
 void textChange(String text) {
+  if (editController.characterChange.value < 10) {
+    editController.characterChange.value++;
+  } else {
+    editController.characterChange.value = 0;
+    autosave();
+  }
   editController.cacheText.value = text;
   editController.fileContent[editController.activeFile.value]['content']
           [editController.fileList[editController.activeFile.value]['activeLine']] =
@@ -400,8 +406,8 @@ void createNewFile(String filename) {
     'extension': fileExtension,
     'activeLine': 0,
     'path': '',
-    'endOfLine': editController.endOfLine.value,
-    'encoding': 'text',
+    'endOfLine': 'system',
+    'encoding': 'UTF8',
     'saved': false,
   };
   Map<String, List<String>> newFileContent = {
@@ -421,6 +427,9 @@ void previousFile() {
     editController.cacheText.value = editController.fileContent[editController.activeFile.value]
         ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
     textEditControl = TextEditingController(text: editController.cacheText.value);
+    editTextFocusNode.requestFocus();
+    textEditControl.selection = TextSelection(
+        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
   }
 }
 
@@ -430,6 +439,9 @@ void nextFile() {
     editController.cacheText.value = editController.fileContent[editController.activeFile.value]
         ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
     textEditControl = TextEditingController(text: editController.cacheText.value);
+    editTextFocusNode.requestFocus();
+    textEditControl.selection = TextSelection(
+        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
   }
 }
 
@@ -456,6 +468,63 @@ void saveFile() {
           fileContent += '\n';
         } else {
           fileContent += '\r\n';
+        }
+      }
+    } else {
+      if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'LF') {
+        if (i !=
+            (editController.fileContent[editController.activeFile.value]['content'].length - 1)) {
+          if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'LF') {
+            fileContent += '\n';
+          } else {
+            fileContent += '\r\n';
+          }
+        }
+      }
+    }
+  }
+  saveFile.writeAsString(fileContent, mode: FileMode.write);
+  editController.fileList[editController.activeFile.value]['saved'] = true;
+}
+
+void autosave() {
+  File saveFile;
+  if (editController.fileList[editController.activeFile.value]['extension'] != '') {
+    saveFile = File(directory.path +
+        '.codecraft/' +
+        editController.fileList[editController.activeFile.value]['fileName'] +
+        '_autosave' +
+        '.' +
+        editController.fileList[editController.activeFile.value]['extension']);
+  } else {
+    saveFile = File(directory.path +
+        '.codecraft/' +
+        editController.fileList[editController.activeFile.value]['fileName'] +
+        '_autosave');
+  }
+  String fileContent = '';
+  for (int i = 0;
+      i < editController.fileContent[editController.activeFile.value]['content'].length;
+      i++) {
+    fileContent += (editController.fileContent[editController.activeFile.value]['content'][i]);
+    if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'system') {
+      if (i !=
+          (editController.fileContent[editController.activeFile.value]['content'].length - 1)) {
+        if (editController.endOfLine.value == 'LF') {
+          fileContent += '\n';
+        } else {
+          fileContent += '\r\n';
+        }
+      }
+    } else {
+      if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'LF') {
+        if (i !=
+            (editController.fileContent[editController.activeFile.value]['content'].length - 1)) {
+          if (editController.fileList[editController.activeFile.value]['endOfLine'] == 'LF') {
+            fileContent += '\n';
+          } else {
+            fileContent += '\r\n';
+          }
         }
       }
     }

@@ -6,11 +6,11 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:intl/intl.dart';
-import '../view/status_bar.dart';
-import './controller/global_controller.dart';
-import './functions.dart';
-import '../controller/color_controller.dart';
-import '../controller/edit_controller.dart';
+import 'package:codecraft/view/status_bar.dart';
+import 'package:codecraft/controller/global_controller.dart';
+import 'package:codecraft/functions.dart';
+import 'package:codecraft/controller/color_controller.dart';
+import 'package:codecraft/controller/edit_controller.dart';
 
 Directory directory;
 List<Map<String, String>> directoryContents = [];
@@ -50,6 +50,9 @@ void main(List<String> arguments) {
         });
         if (element.path.substring(2) == '.codecraft') {
           previousOpen = true;
+        } else {
+          Directory codecraft = Directory('.codecraft');
+          codecraft.create();
         }
       } else {
         directoryContents.add({
@@ -64,6 +67,12 @@ void main(List<String> arguments) {
   }
 
   editController.fileList[editController.activeFile.value]['path'] = directory.path;
+
+  if (Platform.isWindows) {
+    editController.endOfLine.value = '\r\n';
+  } else {
+    editController.endOfLine.value = '\n';
+  }
 
   runApp(CodeCraft());
 }
@@ -82,25 +91,9 @@ StopWatchTimer editModeTimer = StopWatchTimer(
     String displayTime = StopWatchTimer.getDisplayTime(value);
     editController.editModeTime.value = displayTime;
   },
-  onChangeRawSecond: (value) {
-    String displayTime = StopWatchTimer.getDisplayTime(value);
-    editController.editModeTime.value = displayTime;
-  },
-  onChangeRawMinute: (value) {
-    String displayTime = StopWatchTimer.getDisplayTime(value);
-    editController.editModeTime.value = displayTime;
-  },
 );
 StopWatchTimer globalTimer = StopWatchTimer(
   onChange: (value) {
-    String displayTime = StopWatchTimer.getDisplayTime(value);
-    globalController.globalTime.value = displayTime;
-  },
-  onChangeRawSecond: (value) {
-    String displayTime = StopWatchTimer.getDisplayTime(value);
-    globalController.globalTime.value = displayTime;
-  },
-  onChangeRawMinute: (value) {
     String displayTime = StopWatchTimer.getDisplayTime(value);
     globalController.globalTime.value = displayTime;
   },
@@ -513,93 +506,111 @@ class _HomeViewState extends State<HomeView> {
                           activeLineIncrement(1);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
-                        Get.defaultDialog(
-                          backgroundColor: colorController.bgColor.value,
-                          radius: 30.0,
-                          title: '',
-                          titleStyle: TextStyle(
-                            color: colorController.bgColorContrast.value.withOpacity(0.8),
-                            fontFamily: fontFamily,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 0.01,
-                          ),
-                          content: Container(
-                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                            child: RawKeyboardListener(
-                              focusNode: newFileNameFocusNode,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.file_present,
-                                    size: 40,
+                        Get.dialog(
+                          Material(
+                            color: colorController.bgColor.value,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'New File',
+                                  style: TextStyle(
                                     color: colorController.bgColorContrast.value.withOpacity(0.5),
+                                    fontFamily: fontFamily,
+                                    fontSize: editController.fontSize.value * 2,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    width: 200,
-                                    alignment: Alignment.center,
-                                    child: TextField(
-                                      controller: newFileNameController,
-                                      textAlign: TextAlign.center,
-                                      textAlignVertical: TextAlignVertical.center,
-                                      autofocus: true,
-                                      cursorWidth: editController.editFontSize.value / 1.7,
-                                      cursorColor: colorController.bgColorContrast.value,
-                                      cursorHeight: 27,
-                                      style: TextStyle(
-                                        color: colorController.bgColorContrast.value,
-                                        fontFamily: fontFamily,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: editController.fontSize.value * 1.4,
-                                      ),
-                                      decoration: null,
-                                      onSubmitted: (filename) {
-                                        createNewFile(filename);
-                                        Get.back();
-                                        editController.activeFile.value += 1;
-                                      },
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: colorController.bgColorContrast.value.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          offset: (colorController.isDarkMode.value)
-                                              ? (Offset(-5, -5))
-                                              : (Offset(5, 5)),
-                                          color: colorController.contrastExtreme.value.withOpacity(
-                                              (colorController.isDarkMode.value) ? 0.5 : 1),
-                                          blurRadius: 10,
-                                        ),
-                                        BoxShadow(
-                                          offset: (colorController.isDarkMode.value)
-                                              ? (Offset(5, 5))
-                                              : (Offset(-5, -5)),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                                  child: RawKeyboardListener(
+                                    focusNode: newFileNameFocusNode,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.file_present,
+                                          size: 40,
                                           color: colorController.bgColorContrast.value
-                                              .withOpacity(0.1),
-                                          blurRadius: 10,
-                                        )
+                                              .withOpacity(0.5),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          height: 70,
+                                          width: 300,
+                                          alignment: Alignment.center,
+                                          child: TextField(
+                                            controller: newFileNameController,
+                                            textAlign: TextAlign.center,
+                                            textAlignVertical: TextAlignVertical.center,
+                                            autofocus: true,
+                                            cursorWidth: editController.editFontSize.value / 1.7,
+                                            cursorColor: colorController.bgColorContrast.value,
+                                            cursorHeight: 37,
+                                            style: TextStyle(
+                                              color: colorController.bgColorContrast.value,
+                                              fontFamily: fontFamily,
+                                              fontWeight: (colorController.isDarkMode.value)
+                                                  ? (FontWeight.normal)
+                                                  : (FontWeight.w500),
+                                              fontSize: editController.fontSize.value * 2,
+                                            ),
+                                            decoration: null,
+                                            onSubmitted: (filename) {
+                                              createNewFile(filename);
+                                              Get.back();
+                                              editController.activeFile.value += 1;
+                                            },
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: colorController.bgColor.value,
+                                            borderRadius: BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                offset: (colorController.isDarkMode.value)
+                                                    ? (Offset(5, 5))
+                                                    : (Offset(-5, -5)),
+                                                color: colorController.contrastExtreme.value
+                                                    .withOpacity((colorController.isDarkMode.value)
+                                                        ? 0.5
+                                                        : 1),
+                                                blurRadius: 10,
+                                              ),
+                                              BoxShadow(
+                                                offset: (colorController.isDarkMode.value)
+                                                    ? (Offset(-5, -5))
+                                                    : (Offset(5, 5)),
+                                                color: colorController.bgColorContrast.value
+                                                    .withOpacity(0.1),
+                                                blurRadius: 10,
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
+                                    onKey: (keyEvent) {
+                                      if (keyEvent.isKeyPressed(LogicalKeyboardKey.escape)) {
+                                        Get.back();
+                                      } else if ((keyEvent.isControlPressed)) {
+                                        if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
+                                          Get.back();
+                                        }
+                                      }
+                                    },
                                   ),
-                                ],
-                              ),
-                              onKey: (keyEvent) {
-                                if (keyEvent.isKeyPressed(LogicalKeyboardKey.escape)) {
-                                  Get.back();
-                                } else if ((keyEvent.isControlPressed)) {
-                                  if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
-                                    Get.back();
-                                  }
-                                }
-                              },
+                                ),
+                              ],
                             ),
                           ),
+                          barrierDismissible: true,
                         );
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
