@@ -41,8 +41,6 @@ void main(List<String> arguments) {
     directory = Directory(arguments[0]);
   }
 
-  print(directory.path);
-
   List<FileSystemEntity> contents = directory.listSync(recursive: false);
   for (int i = 0; i < contents.length; i++) {
     FileSystemEntity element = contents[i];
