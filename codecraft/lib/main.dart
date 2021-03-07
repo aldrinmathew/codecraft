@@ -22,9 +22,21 @@ void main(List<String> arguments) {
   Intl.defaultLocale = 'en_BR';
 
   if (arguments.length == 0) {
-    directory = Directory(Directory.current.path + '/');
+    if (Directory.current.path
+            .substring(Directory.current.path.length - 1, Directory.current.path.length) !=
+        '/') {
+      directory = Directory(Directory.current.path + '/');
+    } else {
+      directory = Directory(Directory.current.path);
+    }
   } else if (arguments[0] == '.') {
-    directory = Directory(Directory.current.path + '/');
+    if (Directory.current.path
+            .substring(Directory.current.path.length - 1, Directory.current.path.length) !=
+        '/') {
+      directory = Directory(Directory.current.path + '/');
+    } else {
+      directory = Directory(Directory.current.path);
+    }
   } else {
     directory = Directory(arguments[0]);
   }

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:codecraft/view/save_file.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 import './main.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
