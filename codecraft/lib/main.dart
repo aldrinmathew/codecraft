@@ -501,9 +501,10 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   onKey: (keyEvent) async {
-                    if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace) &&
-                        editController.editMode.value) {
-                      editController.errorCount.value++;
+                    if (keyEvent.isKeyPressed(LogicalKeyboardKey.tab) &&
+                        editController.editMode.value &&
+                        editTextFocusNode.hasPrimaryFocus) {
+                      tabKeyHandler();
                     }
                     if (keyEvent.isControlPressed) {
                       if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
@@ -523,14 +524,6 @@ class _HomeViewState extends State<HomeView> {
                             filePath: editController.fileList[editController.activeFile.value]
                                 ['path'],
                           ));
-                        }
-                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
-                        if (upLineCandidate()) {
-                          activeLineDecrement(1);
-                        }
-                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
-                        if (downLineCandidate()) {
-                          activeLineIncrement(1);
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
                         Get.to(NewFileScreen());
@@ -553,6 +546,7 @@ class _HomeViewState extends State<HomeView> {
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
                       if (editController.editMode.value) {
+                        editController.errorCount.value++;
                         if (backspaceCandidate()) {
                           backspaceLine();
                         }
@@ -602,14 +596,22 @@ class _HomeViewState extends State<HomeView> {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
                         editController.editFontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
-                        setState(() {
-                          colorController.darkModeChanger();
-                        });
+                        colorController.darkModeChanger();
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
                         previousFile();
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
                         nextFile();
-                      }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyJ)) {
+                        if (upLineCandidate()) {
+                          activeLineDecrement(1);
+                        }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyM)) {
+                        if (downLineCandidate()) {
+                          activeLineIncrement(1);
+                        }
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyL)) {}
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
                       if (upLineCandidate()) {
                         activeLineDecrement(editController

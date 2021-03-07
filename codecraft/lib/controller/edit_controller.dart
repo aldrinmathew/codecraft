@@ -7,6 +7,7 @@ class EditController extends GetxController {
   RxString cacheText = ''.obs;
   RxInt activeFile = 0.obs;
   RxString editModeTime = ''.obs;
+  RxInt tabSpace = 4.obs;
   RxString endOfLine = 'LF'.obs;
   RxInt characterChange = 0.obs;
   List<Map<String, dynamic>> fileList = [
