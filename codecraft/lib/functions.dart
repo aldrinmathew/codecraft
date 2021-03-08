@@ -182,9 +182,44 @@ bool lowerSectionLoopCandidate(BuildContext mainContext, int i) {
   }
 }
 
-/// Content of each line that is iterated over. One of the most important elements in the application, takes just one line.
-String lineContent(int i) {
-  return editController.fileContent[editController.activeFile.value]['content'][i];
+/// Content of each line that is iterated over. One of the most important elements in the application, takes just a lot of lines, now that parse tree is generated.
+List<InlineSpan> lineContent(int i) {
+  String indentation = '';
+  String alpha = 'ABCDEFGHIJKLMNOPQRSTUVWabcdefghijklmnopqrstuvwxyz_';
+  String alphanumeric = 'ABCDEFGHIJKLMNOPQRSTUVW0123456789abcdefghijklmnopqrstuvwxyz_';
+  String lineContent = editController.fileContent[editController.activeFile.value]['content'][i];
+  List<InlineSpan> returnSpan = [];
+  for (int j = 0; j < lineContent.length; j++) {
+    if (lineContent[j] == '\t') {
+      indentation = '';
+      for (int t = 0;
+          t < editController.tabSpace.value - (j % editController.tabSpace.value);
+          t++) {
+        indentation += ' ';
+      }
+      returnSpan.add(TextSpan(
+        text: indentation,
+      ));
+    } else if (alpha.contains(lineContent[j])) {
+      String text = '';
+      int k;
+      for (k = j;
+          (k != lineContent.length) ? (alphanumeric.contains(lineContent[k])) : (false);
+          k++) {
+        text += lineContent[k];
+      }
+      returnSpan.add(TextSpan(
+        text: text,
+      ));
+      j = k - 1;
+      continue;
+    } else {
+      returnSpan.add(TextSpan(
+        text: lineContent[j],
+      ));
+    }
+  }
+  return returnSpan;
 }
 
 /// Checks if the Active Line can be changed to the previous Line. It can't be changed if the Active Line is the first Line in the file.

@@ -305,7 +305,7 @@ class _HomeViewState extends State<HomeView> {
                                     width: MediaQuery.of(mainContext).size.width * 0.90,
                                     child: RichText(
                                       text: TextSpan(
-                                        text: lineContent(i),
+                                        children: lineContent(i),
                                         style: TextStyle(
                                           color: colorController.bgColorContrast.value
                                               .withOpacity(0.8),
@@ -386,7 +386,7 @@ class _HomeViewState extends State<HomeView> {
                                     width: MediaQuery.of(mainContext).size.width * 0.90,
                                     child: RichText(
                                       text: TextSpan(
-                                        text: lineContent(i),
+                                        children: lineContent(i),
                                         style: TextStyle(
                                           color: colorController.bgColorContrast.value
                                               .withOpacity(0.8),
