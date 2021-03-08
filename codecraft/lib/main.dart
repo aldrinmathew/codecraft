@@ -612,7 +612,42 @@ class _HomeViewState extends State<HomeView> {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyI)) {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyK)) {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyL)) {}
-                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
+                    }
+
+                    // Autocompletion of Basic Characters: ' " [ { ( <
+
+                    else if (keyEvent.character == '[') {
+                      if (editController.editMode.value) {
+                        autoCompleteBasic('[');
+                      }
+                    } else if (keyEvent.character == '(') {
+                      if (editController.editMode.value) {
+                        autoCompleteBasic('(');
+                      }
+                    } else if (keyEvent.character == '{') {
+                      if (editController.editMode.value) {
+                        autoCompleteBasic('{');
+                      }
+                    } else if (keyEvent.character == '\'') {
+                      if (editController.editMode.value) {
+                        autoCompleteBasic('\'');
+                      }
+                    } else if (keyEvent.character == '"') {
+                      if (editController.editMode.value) {
+                        autoCompleteBasic('"');
+                      }
+                    } else if (keyEvent.character == '<') {
+                      if (editController.editMode.value) {
+                        // Checking to see if there is a selection, since the < and > characters are usually part of expressions.
+                        if (textEditControl.selection.start != textEditControl.selection.end) {
+                          autoCompleteBasic('<');
+                        }
+                      }
+                    }
+
+                    // Navigate to the start and end of the document.
+
+                    else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
                       if (upLineCandidate()) {
                         activeLineDecrement(editController
                                 .fileContent[editController.activeFile.value]['content'].length -

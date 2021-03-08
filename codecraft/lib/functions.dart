@@ -598,3 +598,29 @@ void tabKeyHandler() {
   editController.fileList[editController.activeFile.value]['saved'] = false;
   textEditControl.selection = TextSelection(baseOffset: cursorEnd + 1, extentOffset: cursorEnd + 1);
 }
+
+void autoCompleteBasic(String character) {
+  Map<String, String> characterMapping = {
+    '[': ']',
+    '(': ')',
+    '{': '}',
+    '"': '"',
+    '\'': '\'',
+    '<': '>'
+  };
+  int cursorStart = textEditControl.selection.start;
+  int cursorEnd = textEditControl.selection.end;
+  String text = textEditControl.text;
+  textEditControl = TextEditingController(
+      text: text.substring(0, cursorStart) +
+          character +
+          text.substring(cursorStart, cursorEnd) +
+          characterMapping[character] +
+          text.substring(cursorEnd));
+  editController.cacheText.value = textEditControl.text;
+  editController.fileContent[editController.activeFile.value]['content']
+          [editController.fileList[editController.activeFile.value]['activeLine']] =
+      editController.cacheText.value;
+  textEditControl.selection =
+      TextSelection(baseOffset: cursorStart + 1, extentOffset: cursorEnd + 1);
+}
