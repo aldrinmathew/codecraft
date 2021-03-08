@@ -22,14 +22,6 @@ void editModeEnd() {
 }
 
 void textChange(String text) {
-  String autoCompleteCharacters = '({[\'"';
-  Map<String, String> autoCompleteReturn = {
-    '(': ')',
-    '{': '}',
-    '[': ']',
-    '\'': '\'',
-    '"': '"',
-  };
   if (editController.characterChange.value < 10) {
     editController.characterChange.value++;
   } else {
@@ -40,8 +32,6 @@ void textChange(String text) {
   if (text.length != 0 && (textEditControl.selection.start != 0)) {
     int cursorPosition = textEditControl.selection.start;
     String lastCharacter = text.substring(cursorPosition - 1, cursorPosition);
-
-    // Check if the last typed character is alphanumeric.
     if (!(alphanumeric.contains(lastCharacter))) {
       if (editController.isAlphaNum.value) {
         editController.wordCount.value++;
@@ -49,17 +39,6 @@ void textChange(String text) {
       }
     } else {
       editController.isAlphaNum.value = true;
-    }
-
-    // Check for brackets and basic autocompletion elements.
-    if (autoCompleteCharacters.contains(lastCharacter)) {
-      textEditControl = TextEditingController(
-          text: text.substring(0, cursorPosition) +
-              autoCompleteReturn[lastCharacter] +
-              text.substring(cursorPosition));
-      textEditControl.selection =
-          TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
-      text = textEditControl.text;
     }
   }
   if (editController.cacheText.value.length < text.length) {
