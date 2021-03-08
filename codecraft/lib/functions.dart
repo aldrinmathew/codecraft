@@ -611,16 +611,11 @@ void tabKeyHandler() {
   editTextFocusNode.unfocus();
   editTextFocusNode.requestFocus();
   textEditControl = TextEditingController(
-      text: text.substring(0, cursorStart) + tabSpaceReturn() + text.substring(cursorEnd));
-  textEditControl.selection = TextSelection(
-      baseOffset: cursorEnd + editController.tabSpace.value,
-      extentOffset: cursorEnd + editController.tabSpace.value);
-}
-
-String tabSpaceReturn() {
-  String spaces = '';
-  for (int i = 0; i < editController.tabSpace.value; i++) {
-    spaces += ' ';
-  }
-  return spaces;
+      text: text.substring(0, cursorStart) + '\t' + text.substring(cursorEnd));
+  editController.cacheText.value = text;
+  editController.fileContent[editController.activeFile.value]['content']
+          [editController.fileList[editController.activeFile.value]['activeLine']] =
+      editController.cacheText.value;
+  editController.fileList[editController.activeFile.value]['saved'] = false;
+  textEditControl.selection = TextSelection(baseOffset: cursorEnd + 1, extentOffset: cursorEnd + 1);
 }
