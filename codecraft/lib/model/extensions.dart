@@ -25,4 +25,5 @@ Map<String, List<int>> languageExtensions = {
   'php': [16],
   'asp': [17],
   'svg': [18],
+  'xml': [19],
 };
