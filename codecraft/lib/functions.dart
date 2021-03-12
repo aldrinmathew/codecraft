@@ -66,8 +66,7 @@ void textSubmit(String text) {
           text: editController.fileContent[editController.activeFile.value]['content']
               [editController.fileList[editController.activeFile.value]['activeLine']]);
       editController.cacheText.value = textEditControl.text;
-      textEditControl.selection = TextSelection(
-          baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+      textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
       editTextFocusNode.requestFocus();
     } else {
       String textStart = textEditControl.text.substring(0, textEditControl.selection.start);
@@ -81,7 +80,7 @@ void textSubmit(String text) {
           text: editController.fileContent[editController.activeFile.value]['content']
               [editController.fileList[editController.activeFile.value]['activeLine']]);
       editController.cacheText.value = textEditControl.text;
-      textEditControl.selection = TextSelection(baseOffset: 0, extentOffset: 0);
+      textEditControl.selection = TextSelection.collapsed(offset: 0);
       editTextFocusNode.requestFocus();
     }
   } else {
@@ -96,7 +95,7 @@ void textSubmit(String text) {
         text: editController.fileContent[editController.activeFile.value]['content']
             [editController.fileList[editController.activeFile.value]['activeLine']]);
     editController.cacheText.value = textEditControl.text;
-    textEditControl.selection = TextSelection(baseOffset: 0, extentOffset: 0);
+    textEditControl.selection = TextSelection.collapsed(offset: 0);
     editTextFocusNode.requestFocus();
   }
   editController.fileList[editController.activeFile.value]['saved'] = false;
@@ -260,11 +259,10 @@ void activeLineDecrement(int decrementFactor) {
 
   //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
   if (textEditControl.text.length < cursorPosition) {
-    textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   } else {
     textEditControl.selection =
-        TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+        TextSelection.collapsed(offset: cursorPosition);
   }
 }
 
@@ -284,11 +282,10 @@ void activeLineIncrement(int incrementFactor) {
 
   //Done to prevent cursor position index errors, and to retain cursor position of the previous line.
   if (textEditControl.text.length < cursorPosition) {
-    textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   } else {
     textEditControl.selection =
-        TextSelection(baseOffset: cursorPosition, extentOffset: cursorPosition);
+        TextSelection.collapsed(offset: cursorPosition);
   }
 }
 
@@ -331,7 +328,7 @@ void deleteNewLine() {
       .removeAt(editController.fileList[editController.activeFile.value]['activeLine'] + 1);
   editTextFocusNode.requestFocus();
   textEditControl.selection =
-      TextSelection(baseOffset: originalExtent, extentOffset: originalExtent);
+      TextSelection.collapsed(offset: originalExtent);
 }
 
 /// Checks if the cusor position is at the start, in which case, the current line can be deleted after its content is added to the previous line.
@@ -367,7 +364,7 @@ void backspaceLine() {
       .removeAt(editController.fileList[editController.activeFile.value]['activeLine'] + 1);
   editTextFocusNode.requestFocus();
   textEditControl.selection =
-      TextSelection(baseOffset: previousExtent, extentOffset: previousExtent);
+      TextSelection.collapsed(offset: previousExtent);
 }
 
 String modeValue() {
@@ -482,8 +479,7 @@ void previousFile() {
         ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
     textEditControl = TextEditingController(text: editController.cacheText.value);
     editTextFocusNode.requestFocus();
-    textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   }
 }
 
@@ -494,8 +490,7 @@ void nextFile() {
         ['content'][editController.fileList[editController.activeFile.value]['activeLine']];
     textEditControl = TextEditingController(text: editController.cacheText.value);
     editTextFocusNode.requestFocus();
-    textEditControl.selection = TextSelection(
-        baseOffset: textEditControl.text.length, extentOffset: textEditControl.text.length);
+    textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   }
 }
 
@@ -635,7 +630,7 @@ void tabKeyHandler() {
           [editController.fileList[editController.activeFile.value]['activeLine']] =
       editController.cacheText.value;
   editController.fileList[editController.activeFile.value]['saved'] = false;
-  textEditControl.selection = TextSelection(baseOffset: cursorEnd + 1, extentOffset: cursorEnd + 1);
+  textEditControl.selection = TextSelection.collapsed(offset: cursorEnd + 1);
 }
 
 void autoCompleteBasic(String character) {
@@ -684,7 +679,7 @@ void addCurrentTime() {
         TextSelection(baseOffset: offset, extentOffset: offset + dateTime.length);
   } else {
     textEditControl.selection =
-        TextSelection(baseOffset: offset + dateTime.length, extentOffset: offset + dateTime.length);
+        TextSelection.collapsed(offset: offset + dateTime.length);
   }
   editTextFocusNode.requestFocus();
 }
