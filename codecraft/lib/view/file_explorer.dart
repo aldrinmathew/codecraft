@@ -146,7 +146,9 @@ class FileExplorer extends StatelessWidget {
                                       ? (colorController.bgColorContrast.value.withOpacity(0.7))
                                       : (colorController.bgColorContrast.value.withOpacity(1)),
                                   fontFamily: fontFamily,
-                                  fontWeight: (colorController.isDarkMode.value)?(FontWeight.w500):(FontWeight.bold),
+                                  fontWeight: (colorController.isDarkMode.value)
+                                      ? (FontWeight.w500)
+                                      : (FontWeight.bold),
                                   fontSize: 15,
                                 ),
                               ),
@@ -208,20 +210,33 @@ class FileExplorer extends StatelessWidget {
       'vscode': MdiIcons.microsoftVisualStudioCode,
     };
     if (type == 'Folder') {
-      String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
-      print(ext);
-      if (fileIconMap.containsKey(ext)) {
-        return fileIconMap[ext];
+      if (name.contains('.')) {
+        String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
+        if (fileIconMap.containsKey(ext)) {
+          return fileIconMap[ext];
+        } else {
+          return MdiIcons.folder;
+        }
       } else {
-        return MdiIcons.folder;
+        if (fileIconMap.containsKey(name.toLowerCase())) {
+          return fileIconMap[name.toLowerCase()];
+        } else {
+          return MdiIcons.folder;
+        }
       }
     } else {
-      String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
+      if (name.contains('.')){String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
       print(ext);
       if (fileIconMap.containsKey(ext)) {
         return fileIconMap[ext];
       } else {
         return MdiIcons.file;
+      }} else {
+        if (fileIconMap.containsKey(name.toLowerCase())) {
+          return fileIconMap[name.toLowerCase()];
+        } else {
+          return MdiIcons.file;
+        }
       }
     }
   }
