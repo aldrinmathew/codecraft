@@ -24,7 +24,7 @@ class SaveFileScreen extends StatelessWidget {
     saveController.saveFileName.value = fileName;
     saveFileNameController = TextEditingController(text: saveController.saveFileName.value);
     if (saveController.saveFilePath.value == '') {
-      saveController.saveFilePath.value = directory.path + '/';
+      saveController.saveFilePath.value = directory.path;
     } else {
       saveController.saveFilePath.value = filePath;
     }

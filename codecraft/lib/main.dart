@@ -22,17 +22,13 @@ void main(List<String> arguments) {
   Intl.defaultLocale = 'en_BR';
 
   if (arguments.length == 0) {
-    if (Directory.current.path
-            .substring(Directory.current.path.length - 1, Directory.current.path.length) !=
-        '/') {
+    if (Directory.current.path[Directory.current.path.length - 1] != '/') {
       directory = Directory(Directory.current.path + '/');
     } else {
       directory = Directory(Directory.current.path);
     }
   } else if (arguments[0] == '.') {
-    if (Directory.current.path
-            .substring(Directory.current.path.length - 1, Directory.current.path.length) !=
-        '/') {
+    if (Directory.current.path[Directory.current.path.length - 1] != '/') {
       directory = Directory(Directory.current.path + '/');
     } else {
       directory = Directory(Directory.current.path);
@@ -518,15 +514,15 @@ class _HomeViewState extends State<HomeView> {
                         if (editController.fileList[editController.activeFile.value]['onDisk']) {
                           saveFilePrepare();
                         } else {
-                          Get.to(SaveFileScreen(
-                            fileName: editController.fileList[editController.activeFile.value]
-                                ['fileName'],
-                            filePath: editController.fileList[editController.activeFile.value]
-                                ['path'],
-                          ));
+                          Get.to(() => SaveFileScreen(
+                                fileName: editController.fileList[editController.activeFile.value]
+                                    ['fileName'],
+                                filePath: editController.fileList[editController.activeFile.value]
+                                    ['path'],
+                              ));
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
-                        Get.to(NewFileScreen());
+                        Get.to(() => NewFileScreen());
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
