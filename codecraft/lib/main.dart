@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:codecraft/view/status_bar.dart';
 import 'package:codecraft/view/new_file.dart';
 import 'package:codecraft/view/save_file.dart';
+import 'package:codecraft/view/file_explorer.dart';
 import 'package:codecraft/controller/global_controller.dart';
 import 'package:codecraft/functions.dart';
 import 'package:codecraft/controller/color_controller.dart';
@@ -42,14 +43,18 @@ void main(List<String> arguments) {
   List<FileSystemEntity> contents = directory.listSync(recursive: false);
   for (int i = 0; i < contents.length; i++) {
     FileSystemEntity element = contents[i];
+    String name = '';
+    name = element.path.substring(2).split('/')[element.path.substring(2).split('/').length - 1];
     if (element is File) {
       if (directory.path == '') {
         directoryContents.add({
+          'name': name,
           'path': element.path.substring(2),
           'type': 'File',
         });
       } else {
         directoryContents.add({
+          'name': name,
           'path': element.path,
           'type': 'File',
         });
@@ -57,6 +62,7 @@ void main(List<String> arguments) {
     } else if (element is Directory) {
       if (directory.path == '') {
         directoryContents.add({
+          'name': name,
           'path': element.path.substring(2),
           'type': 'Folder',
         });
@@ -72,6 +78,7 @@ void main(List<String> arguments) {
         }
       } else {
         directoryContents.add({
+          'name': name,
           'path': element.path,
           'type': 'Folder',
         });
@@ -536,6 +543,8 @@ class _HomeViewState extends State<HomeView> {
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
                         Get.to(() => NewFileScreen());
+                      } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyF)) {
+                        Get.to(() => FileExplorer());
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
