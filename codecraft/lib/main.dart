@@ -15,6 +15,8 @@ import 'package:codecraft/controller/color_controller.dart';
 import 'package:codecraft/controller/edit_controller.dart';
 
 Directory directory;
+Directory codecraftDirectory;
+Directory autosaveDirectory;
 List<Map<String, String>> directoryContents = [];
 bool previousOpen = false;
 
@@ -60,9 +62,13 @@ void main(List<String> arguments) {
         });
         if (element.path.substring(2) == '.codecraft') {
           previousOpen = true;
+          autosaveDirectory = Directory('.codecraft/autosave');
+          autosaveDirectory.create();
         } else {
-          Directory codecraft = Directory('.codecraft');
-          codecraft.create();
+          codecraftDirectory = Directory('.codecraft');
+          codecraftDirectory.create(recursive: false);
+          autosaveDirectory = Directory('.codecraft/autosave');
+          autosaveDirectory.create(recursive: true);
         }
       } else {
         directoryContents.add({
@@ -71,6 +77,13 @@ void main(List<String> arguments) {
         });
         if (element.path == '.codecraft') {
           previousOpen = true;
+          autosaveDirectory = Directory('.codecraft/autosave');
+          autosaveDirectory.create();
+        } else {
+          codecraftDirectory = Directory('.codecraft');
+          codecraftDirectory.create(recursive: false);
+          autosaveDirectory = Directory('.codecraft/autosave');
+          autosaveDirectory.create(recursive: true);
         }
       }
     }
@@ -561,31 +574,8 @@ class _HomeViewState extends State<HomeView> {
                       if (downLineCandidate()) {
                         activeLineIncrement(1);
                       }
-                    } else if ((keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) &&
-                        (keyEvent.isKeyPressed(LogicalKeyboardKey.keyT))) {
-                      DateFormat dateFormat = DateFormat.jms('en_US');
-                      String dateTime = dateFormat.format(DateTime.now());
-                      String text = textEditControl.text;
-                      int offset;
-                      int offsetEnd;
-                      if (textEditControl.selection.start == textEditControl.selection.end) {
-                        offset = textEditControl.selection.start;
-                        text = text.substring(0, offset) + dateTime + text.substring(offset);
-                      } else {
-                        offset = textEditControl.selection.start;
-                        offsetEnd = textEditControl.selection.end;
-                        text = text.substring(0, offset) + dateTime + text.substring(offsetEnd);
-                      }
-                      textEditControl = TextEditingController(text: text);
-                      if (textEditControl.selection.start != textEditControl.selection.end) {
-                        textEditControl.selection = TextSelection(
-                            baseOffset: offset, extentOffset: offset + dateTime.length);
-                      } else {
-                        textEditControl.selection = TextSelection(
-                            baseOffset: offset + dateTime.length,
-                            extentOffset: offset + dateTime.length);
-                      }
-                      editTextFocusNode.requestFocus();
+                    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.insert)) {
+                      // Implementation of custom inserts removed for refactor.
                     } else if (keyEvent.isAltPressed) {
                       if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
                         editController.editFontSize.value++;

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:codecraft/view/save_file.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import './main.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -28,6 +29,7 @@ void textChange(String text) {
     editController.characterChange.value = 0;
     autosave();
   }
+  print(text.length);
   String alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVW0123456789abcdefghijklmnopqrstuvwxyz";
   if (text.length != 0 && (textEditControl.selection.start != 0)) {
     int cursorPosition = textEditControl.selection.start;
@@ -576,16 +578,18 @@ void autosave() {
   File saveFile;
   if (editController.fileList[editController.activeFile.value]['extension'] != '') {
     saveFile = File(directory.path +
-        '.codecraft/' +
+        '.codecraft/autosave/' +
         editController.fileList[editController.activeFile.value]['fileName'] +
         '_autosave' +
         '.' +
         editController.fileList[editController.activeFile.value]['extension']);
+    saveFile.create(recursive: true);
   } else {
     saveFile = File(directory.path +
-        '.codecraft/' +
+        '.codecraft/autosave/' +
         editController.fileList[editController.activeFile.value]['fileName'] +
         '_autosave');
+    saveFile.create(recursive: true);
   }
   String fileContent = '';
   for (int i = 0;
@@ -658,4 +662,29 @@ void autoCompleteBasic(String character) {
       editController.cacheText.value;
   textEditControl.selection =
       TextSelection(baseOffset: cursorStart + 1, extentOffset: cursorEnd + 1);
+}
+
+void addCurrentTime() {
+  DateFormat dateFormat = DateFormat.jms('en_US');
+  String dateTime = dateFormat.format(DateTime.now());
+  String text = textEditControl.text;
+  int offset;
+  int offsetEnd;
+  if (textEditControl.selection.start == textEditControl.selection.end) {
+    offset = textEditControl.selection.start;
+    text = text.substring(0, offset) + dateTime + text.substring(offset);
+  } else {
+    offset = textEditControl.selection.start;
+    offsetEnd = textEditControl.selection.end;
+    text = text.substring(0, offset) + dateTime + text.substring(offsetEnd);
+  }
+  textEditControl = TextEditingController(text: text);
+  if (textEditControl.selection.start != textEditControl.selection.end) {
+    textEditControl.selection =
+        TextSelection(baseOffset: offset, extentOffset: offset + dateTime.length);
+  } else {
+    textEditControl.selection =
+        TextSelection(baseOffset: offset + dateTime.length, extentOffset: offset + dateTime.length);
+  }
+  editTextFocusNode.requestFocus();
 }
