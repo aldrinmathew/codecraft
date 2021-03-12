@@ -8,6 +8,7 @@ dependencies:
   get: ^3.25.4
   stop_watch_timer: ^0.7.0
   intl: ^0.16.1
+  material_design_icons_flutter: 4.0.5955
   cupertino_icons: ^1.0.2
   flutter: 
     sdk: flutter

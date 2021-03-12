@@ -5,6 +5,7 @@ import 'package:codecraft/controller/explorer_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 FocusNode explorerFocusNode = FocusNode(
   canRequestFocus: true,
@@ -60,7 +61,7 @@ class FileExplorer extends StatelessWidget {
               Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.all(15),
-                height: MediaQuery.of(context).size.height * 0.05,
+                height: MediaQuery.of(context).size.height * 0.07,
                 child: TextField(
                   focusNode: explorerPathFocusNode,
                   controller: explorerPathController,
@@ -71,7 +72,7 @@ class FileExplorer extends StatelessWidget {
                   cursorColor: colorController.bgColorContrast.value,
                   cursorHeight: editController.editFontSize.value * 1.4,
                   enableInteractiveSelection: true,
-                  decoration: null,
+                  decoration: InputDecoration(border: InputBorder.none),
                   style: TextStyle(
                     color: colorController.bgColorContrast.value,
                     fontFamily: fontFamily,
@@ -101,68 +102,68 @@ class FileExplorer extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                height: (MediaQuery.of(context).size.height * 0.95) - 30,
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.all(20),
-                color: colorController.bgColor.value,
-                child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                      childAspectRatio: 1/1,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                    ),
-                    itemCount: explorerController.contents.length,
-                    itemBuilder: (context, i) {
-                      return Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.all(5),
-                        height: 50,
-                        width: 50,
-                        
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              (explorerController.contents[i]['type'] == 'Folder')
-                                  ? (Icons.folder)
-                                  : (Icons.file_present),
-                              color: (explorerController.contents[i]['name'].substring(0, 1) == '.')
-                                  ? (colorController.bgColorContrast.value.withOpacity(0.6))
-                                  : (colorController.bgColorContrast.value.withOpacity(0.9)),
-                              size: 70,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              explorerController.contents[i]['name'],
-                              style: TextStyle(
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(20),
+                  color: colorController.bgColor.value,
+                  child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        childAspectRatio: 1 / 1,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                      ),
+                      itemCount: explorerController.contents.length,
+                      itemBuilder: (context, i) {
+                        return Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.all(5),
+                          height: 50,
+                          width: 50,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                iconPicker(
+                                    name: explorerController.contents[i]['name'],
+                                    type: explorerController.contents[i]['type']),
                                 color:
                                     (explorerController.contents[i]['name'].substring(0, 1) == '.')
-                                        ? (colorController.bgColorContrast.value.withOpacity(0.4))
-                                        : (colorController.bgColorContrast.value.withOpacity(0.6)),
-                                fontFamily: fontFamily,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                                        ? (colorController.bgColorContrast.value.withOpacity(0.6))
+                                        : (colorController.bgColorContrast.value.withOpacity(0.9)),
+                                size: 70,
                               ),
-                            ),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorController.bgColor.value,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: (explorerController.selectedContent.value == i)
-                            ? (colorController.appStyleColor)
-                            : (Colors.transparent),
-                            width: 2.0
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                explorerController.contents[i]['name'],
+                                style: TextStyle(
+                                  color: (explorerController.contents[i]['name'].substring(0, 1) ==
+                                          '.')
+                                      ? (colorController.bgColorContrast.value.withOpacity(0.7))
+                                      : (colorController.bgColorContrast.value.withOpacity(1)),
+                                  fontFamily: fontFamily,
+                                  fontWeight: (colorController.isDarkMode.value)?(FontWeight.w500):(FontWeight.bold),
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      );
-                    }),
+                          decoration: BoxDecoration(
+                            color: colorController.bgColor.value,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                                color: (explorerController.selectedContent.value == i)
+                                    ? (colorController.appStyleColor.withOpacity(0.7))
+                                    : (Colors.transparent),
+                                width: 3.0),
+                          ),
+                        );
+                      }),
+                ),
               ),
             ],
           ),
@@ -176,5 +177,52 @@ class FileExplorer extends StatelessWidget {
         ),
       );
     });
+  }
+
+  IconData iconPicker({String name, String type}) {
+    Map<String, IconData> fileIconMap = {
+      'git': MdiIcons.git,
+      'gitignore': MdiIcons.git,
+      'gitattributes': MdiIcons.git,
+      'gitmodules': MdiIcons.git,
+      'linux': MdiIcons.linux,
+      'windows': MdiIcons.microsoftWindows,
+      'mac': MdiIcons.apple,
+      'macos': MdiIcons.apple,
+      'yaml': MdiIcons.codeJson,
+      'lock': MdiIcons.lock,
+      'idea': MdiIcons.lightbulb,
+      'metadata': MdiIcons.database,
+      'package': MdiIcons.package,
+      'packages': MdiIcons.packageVariant,
+      'lib': MdiIcons.libraryShelves,
+      'cpp': MdiIcons.languageCpp,
+      'c': MdiIcons.languageC,
+      'css': MdiIcons.languageCss3,
+      'js': MdiIcons.languageJavascript,
+      'json': MdiIcons.codeJson,
+      'hs': MdiIcons.languageHaskell,
+      'py': MdiIcons.languagePython,
+      'php': MdiIcons.languagePhp,
+      'md': MdiIcons.languageMarkdown,
+      'vscode': MdiIcons.microsoftVisualStudioCode,
+    };
+    if (type == 'Folder') {
+      String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
+      print(ext);
+      if (fileIconMap.containsKey(ext)) {
+        return fileIconMap[ext];
+      } else {
+        return MdiIcons.folder;
+      }
+    } else {
+      String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
+      print(ext);
+      if (fileIconMap.containsKey(ext)) {
+        return fileIconMap[ext];
+      } else {
+        return MdiIcons.file;
+      }
+    }
   }
 }
