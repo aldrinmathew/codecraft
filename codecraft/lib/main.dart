@@ -30,14 +30,34 @@ void main(List<String> arguments) {
     } else {
       directory = Directory(Directory.current.path);
     }
-  } else if (arguments[0] == '.') {
+  } else if ((arguments[0] == '.')) {
     if (Directory.current.path[Directory.current.path.length - 1] != '/') {
       directory = Directory(Directory.current.path + '/');
     } else {
       directory = Directory(Directory.current.path);
     }
   } else {
-    directory = Directory(arguments[0]);
+    String cachePath = arguments[0];
+    if (FileSystemEntity.typeSync(cachePath) != FileSystemEntityType.notFound) {
+      if (FileSystemEntity.typeSync(cachePath).toString() == 'directory') {
+        directory = Directory(cachePath);
+      } else if (FileSystemEntity.typeSync(cachePath).toString() == 'file') {
+        File cacheFile = File(cachePath);
+        cacheFile.open();
+        String fileName = '';
+        if(cachePath.contains('/')) {
+          fileName = cachePath.split('/')[cachePath.split('/').length - 1];
+        }
+        if(fileName.contains('\\')) {
+          fileName = fileName.split('\\')[fileName.split('\\').length - 1];
+        }
+        cachePath = cachePath.substring(0, cachePath.length - fileName.length);
+        directory = Directory(cachePath);
+        createNewFile(fileName);
+        editController.activeFile.value++;
+        readFile(cacheFile);
+      }
+    }
   }
 
   List<FileSystemEntity> contents = directory.listSync(recursive: false);

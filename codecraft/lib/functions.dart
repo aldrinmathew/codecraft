@@ -441,12 +441,8 @@ void createNewFile(String filename) {
   String fileExtension = '';
   if (filename != '') {
     if (filename.contains('.')) {
-      List<String> fileNameContent = filename.split('.');
-      filename = '';
-      for (int i = 0; i < (fileNameContent.length - 1); i++) {
-        filename += fileNameContent[i];
-      }
-      fileExtension = fileNameContent[fileNameContent.length - 1];
+      fileExtension = filename.split('.')[filename.split('.').length - 1];
+      filename = filename.substring(0, filename.length - fileExtension.length - 1);
     }
   }
   int fileID = editController.fileList[editController.fileList.length - 1]['fileID'] + 1;
@@ -470,6 +466,12 @@ void createNewFile(String filename) {
   editController.fileContent.insert(editController.activeFile.value + 1, newFileContent);
   editController.cacheText.value = '';
   textEditControl = TextEditingController(text: editController.cacheText.value);
+}
+
+void readFile(File openFile) {
+  editController.fileList[editController.activeFile.value]['onDisk'] = true;
+  editController.fileContent[editController.activeFile.value]['content'] = openFile.readAsLinesSync();
+  editController.fileList[editController.activeFile.value]['activeLine'] = 0;
 }
 
 void previousFile() {

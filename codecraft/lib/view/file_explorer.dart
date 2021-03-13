@@ -226,7 +226,6 @@ class FileExplorer extends StatelessWidget {
       }
     } else {
       if (name.contains('.')){String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
-      print(ext);
       if (fileIconMap.containsKey(ext)) {
         return fileIconMap[ext];
       } else {
