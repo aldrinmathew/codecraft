@@ -9,4 +9,5 @@ class ExplorerController extends GetxController {
   Rx<Directory> eDirectory = directory.obs;
   List<Map<String, String>> contents;
   RxInt selectedContent = 0.obs;
+  RxInt rowContentCount = 7.obs;
 }

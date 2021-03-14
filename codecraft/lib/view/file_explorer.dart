@@ -16,6 +16,15 @@ TextEditingController explorerPathController = TextEditingController(text: '');
 ExplorerController explorerController = ExplorerController();
 List<FileSystemEntity> contentList;
 
+/*
+  Thanks to Tim Whiting
+  https://github.com/TimWhiting
+  for demonstrating the use of Actions, Shortcuts and Intent
+  in his Sample Code and his Test App that tested the use of
+  Tab, Shift, Enter, Escape keys to navigate between various
+  TextFields, Buttons and areas of the application.
+*/
+
 class NavigateBackIntent extends Intent {
   NavigateBackIntent();
 }
@@ -24,6 +33,37 @@ class NavigateBackAction extends Action<NavigateBackIntent> {
   @override
   void invoke(covariant NavigateBackIntent intent) {
     Get.back();
+  }
+}
+
+class FocusChangeIntent extends Intent {
+  final int count;
+  final bool focus;
+  FocusChangeIntent({this.count, this.focus});
+}
+
+class FocusChangeAction extends Action<FocusChangeIntent> {
+  @override
+  void invoke(covariant FocusChangeIntent intent) {
+    if (intent.focus) {
+      explorerPathFocusNode.unfocus();
+    }
+    if ((explorerController.selectedContent.value + intent.count) >=
+        explorerController.contents.length) {
+      explorerController.selectedContent.value = explorerController.contents.length - 1;
+    } else if ((explorerController.selectedContent.value + intent.count) <= -1) {
+      if (intent.count == -1) {
+        explorerController.selectedContent.value = -1;
+        explorerPathFocusNode.requestFocus();
+      } else {
+        explorerController.selectedContent.value = 0;
+      }
+    } else {
+      explorerController.selectedContent.value += intent.count;
+      if (explorerController.selectedContent.value == 0) {
+        explorerFocusNode.unfocus();
+      }
+    }
   }
 }
 
@@ -69,21 +109,39 @@ class FileExplorer extends StatelessWidget {
         body: Actions(
           actions: {
             NavigateBackIntent: NavigateBackAction(),
+            FocusChangeIntent: FocusChangeAction(),
           },
           child: Shortcuts(
-            shortcuts: (explorerPathFocusNode.hasFocus)
+            shortcuts: (explorerController.selectedContent.value == (-1))
                 ? {
                     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
                         NavigateBackIntent(),
                     LogicalKeySet(LogicalKeyboardKey.escape): NavigateBackIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.arrowDown):
+                        FocusChangeIntent(count: 1, focus: true),
                   }
                 : {
                     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
                         NavigateBackIntent(),
                     LogicalKeySet(LogicalKeyboardKey.escape): NavigateBackIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.arrowLeft):
+                        FocusChangeIntent(count: -1, focus: false),
+                    LogicalKeySet(LogicalKeyboardKey.arrowRight):
+                        FocusChangeIntent(count: 1, focus: false),
+                    LogicalKeySet(LogicalKeyboardKey.arrowUp): FocusChangeIntent(
+                        count: (explorerController.selectedContent.value == 0)
+                            ? (-1)
+                            : (-explorerController.rowContentCount.value),
+                        focus: false),
+                    LogicalKeySet(LogicalKeyboardKey.arrowDown): FocusChangeIntent(
+                        count: explorerController.rowContentCount.value, focus: false)
                   },
             child: Column(
               children: [
+                RawKeyboardListener(
+                  focusNode: explorerFocusNode,
+                  child: Container(),
+                ),
                 Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.all(15),
@@ -142,7 +200,7 @@ class FileExplorer extends StatelessWidget {
                     color: colorController.bgColor.value,
                     child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 7,
+                          crossAxisCount: explorerController.rowContentCount.value,
                           childAspectRatio: 1 / 1,
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
@@ -195,7 +253,7 @@ class FileExplorer extends StatelessWidget {
                                   color: (explorerController.selectedContent.value == i)
                                       ? (colorController.appStyleColor.withOpacity(0.7))
                                       : (Colors.transparent),
-                                  width: 3.0),
+                                  width: 4.0),
                             ),
                           );
                         }),
