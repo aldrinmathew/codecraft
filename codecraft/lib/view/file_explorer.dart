@@ -91,12 +91,12 @@ class SelectContentAction extends Action<SelectContentIntent> {
               [editController.fileList[editController.activeFile.value]['activeLine']]);
       Get.back();
     } else {
-      fileContentSync(intent.path);
+      folderContentSync(intent.path);
     }
   }
 }
 
-void fileContentSync(String currentPath) {
+void folderContentSync(String currentPath) {
   explorerController.selectedContent.value = -1;
   explorerController.contents.clear();
   explorerController.path.value = currentPath;
@@ -137,7 +137,7 @@ class FileExplorer extends StatelessWidget {
       explorerPathController.text = explorerController.path.value;
       explorerController.contents = directoryContents;
     } else {
-      fileContentSync(explorerController.path.value);
+      folderContentSync(explorerController.path.value);
     }
     explorerPathFocusNode.requestFocus();
     explorerController.selectedContent.value = -1;
