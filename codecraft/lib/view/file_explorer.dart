@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:codecraft/functions.dart';
 import 'package:codecraft/main.dart';
 import 'package:codecraft/controller/explorer_controller.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,67 @@ class FocusChangeAction extends Action<FocusChangeIntent> {
   }
 }
 
+class SelectContentIntent extends Intent {
+  final String name;
+  final String type;
+  final String path;
+  SelectContentIntent({this.name, this.type, this.path});
+}
+
+class SelectContentAction extends Action<SelectContentIntent> {
+  @override
+  void invoke(covariant SelectContentIntent intent) {
+    if (intent.type == 'File') {
+      String newPath;
+      newPath = intent.path.substring(0, intent.path.length - intent.name.length);
+      createNewFile(fileName: intent.name, filePath: newPath);
+      editController.activeFile.value++;
+      File openingFile = File(intent.path);
+      openingFile.open(mode: FileMode.read);
+      readFile(openingFile);
+      textEditControl = TextEditingController(
+          text: editController.fileContent[editController.activeFile.value]['content']
+              [editController.fileList[editController.activeFile.value]['activeLine']]);
+      Get.back();
+    } else {
+      fileContentSync(intent.path);
+    }
+  }
+}
+
+void fileContentSync(String currentPath) {
+  explorerController.selectedContent.value = -1;
+  explorerController.contents.clear();
+  explorerController.path.value = currentPath;
+  explorerController.eDirectory.value = Directory(explorerController.path.value);
+  explorerPathController.text = explorerController.path.value;
+  contentList = explorerController.eDirectory.value.listSync(recursive: false);
+  for (int i = 0; i < contentList.length; i++) {
+    FileSystemEntity element = contentList[i];
+    String name = '';
+    if (element.path.contains('/')) {
+      name = element.path.split('/')[element.path.split('/').length - 1];
+    }
+    if (element.path.contains('\\')) {
+      name = element.path.split('\\')[element.path.split('\\').length - 1];
+    }
+    if (element is File) {
+      explorerController.contents.add({
+        'name': name,
+        'path': element.path,
+        'type': 'File',
+      });
+    } else if (element is Directory) {
+      explorerController.contents.add({
+        'name': name,
+        'path': element.path,
+        'type': 'Folder',
+      });
+    }
+  }
+  explorerController.selectedContent.value = 0;
+}
+
 class FileExplorer extends StatelessWidget {
   FileExplorer() {
     if (explorerController.path.value == '') {
@@ -75,28 +137,7 @@ class FileExplorer extends StatelessWidget {
       explorerPathController.text = explorerController.path.value;
       explorerController.contents = directoryContents;
     } else {
-      explorerController.contents.clear();
-      explorerController.eDirectory.value = Directory(explorerController.path.value);
-      explorerPathController.text = explorerController.path.value;
-      contentList = explorerController.eDirectory.value.listSync(recursive: false);
-      for (int i = 0; i < contentList.length; i++) {
-        FileSystemEntity element = contentList[i];
-        String name = '';
-        name = element.path.split('/')[element.path.split('/').length - 1];
-        if (element is File) {
-          explorerController.contents.add({
-            'name': name,
-            'path': element.path,
-            'type': 'File',
-          });
-        } else if (element is Directory) {
-          explorerController.contents.add({
-            'name': name,
-            'path': element.path,
-            'type': 'Folder',
-          });
-        }
-      }
+      fileContentSync(explorerController.path.value);
     }
     explorerPathFocusNode.requestFocus();
     explorerController.selectedContent.value = -1;
@@ -110,6 +151,7 @@ class FileExplorer extends StatelessWidget {
           actions: {
             NavigateBackIntent: NavigateBackAction(),
             FocusChangeIntent: FocusChangeAction(),
+            SelectContentIntent: SelectContentAction(),
           },
           child: Shortcuts(
             shortcuts: (explorerController.selectedContent.value == (-1))
@@ -134,7 +176,14 @@ class FileExplorer extends StatelessWidget {
                             : (-explorerController.rowContentCount.value),
                         focus: false),
                     LogicalKeySet(LogicalKeyboardKey.arrowDown): FocusChangeIntent(
-                        count: explorerController.rowContentCount.value, focus: false)
+                        count: explorerController.rowContentCount.value, focus: false),
+                    LogicalKeySet(LogicalKeyboardKey.enter): SelectContentIntent(
+                        name: explorerController.contents[explorerController.selectedContent.value]
+                            ['name'],
+                        type: explorerController.contents[explorerController.selectedContent.value]
+                            ['type'],
+                        path: explorerController.contents[explorerController.selectedContent.value]
+                            ['path']),
                   },
             child: Column(
               children: [
@@ -299,15 +348,15 @@ class FileExplorer extends StatelessWidget {
       if (name.contains('.')) {
         // String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
         // if (fileIconMap.containsKey(ext)) {
-          // return fileIconMap[ext];
+        // return fileIconMap[ext];
         // } else {
-          return MdiIcons.folder;
+        return MdiIcons.folder;
         // }
       } else {
         // if (fileIconMap.containsKey(name.toLowerCase())) {
         //   return fileIconMap[name.toLowerCase()];
         // } else {
-          return MdiIcons.folder;
+        return MdiIcons.folder;
         // }
       }
     } else {

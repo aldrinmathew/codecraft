@@ -45,15 +45,15 @@ void main(List<String> arguments) {
         File cacheFile = File(cachePath);
         cacheFile.open();
         String fileName = '';
-        if(cachePath.contains('/')) {
+        if (cachePath.contains('/')) {
           fileName = cachePath.split('/')[cachePath.split('/').length - 1];
         }
-        if(fileName.contains('\\')) {
+        if (fileName.contains('\\')) {
           fileName = fileName.split('\\')[fileName.split('\\').length - 1];
         }
         cachePath = cachePath.substring(0, cachePath.length - fileName.length);
         directory = Directory(cachePath);
-        createNewFile(fileName);
+        createNewFile(fileName: fileName, filePath: cachePath);
         editController.activeFile.value++;
         readFile(cacheFile);
       }

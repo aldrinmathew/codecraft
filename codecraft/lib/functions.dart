@@ -437,21 +437,21 @@ void fileendOfLineChange(String eol) {
   editController.fileList[editController.activeFile.value]['endOfLine'] = eol;
 }
 
-void createNewFile(String filename) {
+void createNewFile({String fileName, String filePath = ''}) {
   String fileExtension = '';
-  if (filename != '') {
-    if (filename.contains('.')) {
-      fileExtension = filename.split('.')[filename.split('.').length - 1];
-      filename = filename.substring(0, filename.length - fileExtension.length - 1);
+  if (fileName != '') {
+    if (fileName.contains('.')) {
+      fileExtension = fileName.split('.')[fileName.split('.').length - 1];
+      fileName = fileName.substring(0, fileName.length - fileExtension.length - 1);
     }
   }
   int fileID = editController.fileList[editController.fileList.length - 1]['fileID'] + 1;
   Map<String, dynamic> newFile = {
     'fileID': fileID,
-    'fileName': filename,
+    'fileName': fileName,
     'extension': fileExtension,
     'activeLine': 0,
-    'path': '',
+    'path': filePath,
     'endOfLine': 'system',
     'encoding': 'UTF-8',
     'onDisk': false,

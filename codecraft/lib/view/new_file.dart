@@ -64,8 +64,8 @@ class NewFileScreen extends StatelessWidget {
                           fontSize: editController.fontSize.value * 2,
                         ),
                         decoration: null,
-                        onSubmitted: (filename) {
-                          createNewFile(filename);
+                        onSubmitted: (fileName) {
+                          createNewFile(fileName: fileName, filePath: '');
                           Get.back();
                           editController.activeFile.value += 1;
                         },
