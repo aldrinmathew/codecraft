@@ -297,18 +297,18 @@ class FileExplorer extends StatelessWidget {
     };
     if (type == 'Folder') {
       if (name.contains('.')) {
-        String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
-        if (fileIconMap.containsKey(ext)) {
-          return fileIconMap[ext];
-        } else {
+        // String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
+        // if (fileIconMap.containsKey(ext)) {
+          // return fileIconMap[ext];
+        // } else {
           return MdiIcons.folder;
-        }
+        // }
       } else {
-        if (fileIconMap.containsKey(name.toLowerCase())) {
-          return fileIconMap[name.toLowerCase()];
-        } else {
+        // if (fileIconMap.containsKey(name.toLowerCase())) {
+        //   return fileIconMap[name.toLowerCase()];
+        // } else {
           return MdiIcons.folder;
-        }
+        // }
       }
     } else {
       if (name.contains('.')) {
