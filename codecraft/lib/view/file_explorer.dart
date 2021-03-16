@@ -93,11 +93,13 @@ class SelectContentAction extends Action<SelectContentIntent> {
       editController.activeFile.value++;
       File openingFile = File(intent.path);
       openingFile.open(mode: FileMode.read);
-      readFile(openingFile);
-      textEditControl = TextEditingController(
-          text: editController.fileContent[editController.activeFile.value]['content']
-              [editController.fileList[editController.activeFile.value]['activeLine']]);
-      Get.back();
+      String readStatus = readFile(openingFile);
+      if (readStatus == '') {
+        textEditControl = TextEditingController(
+            text: editController.fileContent[editController.activeFile.value]['content']
+                [editController.fileList[editController.activeFile.value]['activeLine']]);
+        Get.back();
+      }
     } else {
       folderContentSync(intent.path);
       if (explorerController.historyIndex.value == (explorerController.history.length - 1)) {
@@ -285,6 +287,9 @@ class FileExplorer extends StatelessWidget {
                           ? (FontWeight.normal)
                           : (FontWeight.w500),
                     ),
+                    onTap: () {
+                      explorerController.selectedContent.value = -1;
+                    },
                   ),
                   decoration: BoxDecoration(
                     color: colorController.bgColor.value,

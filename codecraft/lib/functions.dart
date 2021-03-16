@@ -261,8 +261,7 @@ void activeLineDecrement(int decrementFactor) {
   if (textEditControl.text.length < cursorPosition) {
     textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   } else {
-    textEditControl.selection =
-        TextSelection.collapsed(offset: cursorPosition);
+    textEditControl.selection = TextSelection.collapsed(offset: cursorPosition);
   }
 }
 
@@ -284,8 +283,7 @@ void activeLineIncrement(int incrementFactor) {
   if (textEditControl.text.length < cursorPosition) {
     textEditControl.selection = TextSelection.collapsed(offset: textEditControl.text.length);
   } else {
-    textEditControl.selection =
-        TextSelection.collapsed(offset: cursorPosition);
+    textEditControl.selection = TextSelection.collapsed(offset: cursorPosition);
   }
 }
 
@@ -327,8 +325,7 @@ void deleteNewLine() {
   editController.fileContent[editController.activeFile.value]['content']
       .removeAt(editController.fileList[editController.activeFile.value]['activeLine'] + 1);
   editTextFocusNode.requestFocus();
-  textEditControl.selection =
-      TextSelection.collapsed(offset: originalExtent);
+  textEditControl.selection = TextSelection.collapsed(offset: originalExtent);
 }
 
 /// Checks if the cusor position is at the start, in which case, the current line can be deleted after its content is added to the previous line.
@@ -363,8 +360,7 @@ void backspaceLine() {
   editController.fileContent[editController.activeFile.value]['content']
       .removeAt(editController.fileList[editController.activeFile.value]['activeLine'] + 1);
   editTextFocusNode.requestFocus();
-  textEditControl.selection =
-      TextSelection.collapsed(offset: previousExtent);
+  textEditControl.selection = TextSelection.collapsed(offset: previousExtent);
 }
 
 String modeValue() {
@@ -468,10 +464,25 @@ void createNewFile({String fileName, String filePath = ''}) {
   textEditControl = TextEditingController(text: editController.cacheText.value);
 }
 
-void readFile(File openFile) {
+String readFile(File openFile) {
+  Map<String, String> readErrorCodes = {
+    'ER-READ-1': 'The File encoding is not supported. Read failed.',
+  };
   editController.fileList[editController.activeFile.value]['onDisk'] = true;
-  editController.fileContent[editController.activeFile.value]['content'] = openFile.readAsLinesSync();
+  try {
+    editController.fileContent[editController.activeFile.value]['content'] =
+        openFile.readAsLinesSync();
+  } catch (error) {
+    editController.activeFile.value--;
+    editController.fileContent.removeAt(editController.activeFile.value + 1);
+    if(error.toString().contains("Failed to decode data using encoding")) {
+      return readErrorCodes['ER-READ-1'];
+    } else {
+      return error.toString();
+    }
+  }
   editController.fileList[editController.activeFile.value]['activeLine'] = 0;
+  return '';
 }
 
 void previousFile() {
@@ -680,8 +691,7 @@ void addCurrentTime() {
     textEditControl.selection =
         TextSelection(baseOffset: offset, extentOffset: offset + dateTime.length);
   } else {
-    textEditControl.selection =
-        TextSelection.collapsed(offset: offset + dateTime.length);
+    textEditControl.selection = TextSelection.collapsed(offset: offset + dateTime.length);
   }
   editTextFocusNode.requestFocus();
 }
