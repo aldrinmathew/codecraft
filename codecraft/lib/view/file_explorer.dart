@@ -26,13 +26,13 @@ List<FileSystemEntity> contentList;
   TextFields, Buttons and areas of the application.
 */
 
-class NavigateBackIntent extends Intent {
-  NavigateBackIntent();
+class ExitExplorerIntent extends Intent {
+  ExitExplorerIntent();
 }
 
-class NavigateBackAction extends Action<NavigateBackIntent> {
+class ExitExplorerAction extends Action<ExitExplorerIntent> {
   @override
-  void invoke(covariant NavigateBackIntent intent) {
+  void invoke(covariant ExitExplorerIntent intent) {
     Get.back();
   }
 }
@@ -52,15 +52,23 @@ class FocusChangeAction extends Action<FocusChangeIntent> {
     if ((explorerController.selectedContent.value + intent.count) >=
         explorerController.contents.length) {
       explorerController.selectedContent.value = explorerController.contents.length - 1;
+      explorerController.history[explorerController.historyIndex.value]['selection'] =
+          explorerController.selectedContent.value;
     } else if ((explorerController.selectedContent.value + intent.count) <= -1) {
       if (intent.count == -1) {
         explorerController.selectedContent.value = -1;
+        explorerController.history[explorerController.historyIndex.value]['selection'] =
+            explorerController.selectedContent.value;
         explorerPathFocusNode.requestFocus();
       } else {
         explorerController.selectedContent.value = 0;
+        explorerController.history[explorerController.historyIndex.value]['selection'] =
+            explorerController.selectedContent.value;
       }
     } else {
       explorerController.selectedContent.value += intent.count;
+      explorerController.history[explorerController.historyIndex.value]['selection'] =
+          explorerController.selectedContent.value;
       if (explorerController.selectedContent.value == 0) {
         explorerFocusNode.unfocus();
       }
@@ -92,7 +100,58 @@ class SelectContentAction extends Action<SelectContentIntent> {
       Get.back();
     } else {
       folderContentSync(intent.path);
+      if (explorerController.historyIndex.value == (explorerController.history.length - 1)) {
+        explorerController.history.add({
+          'path': intent.path,
+          'selection': explorerController.selectedContent.value,
+        });
+      } else {
+        explorerController.history[explorerController.historyIndex.value + 1] = {
+          'path': intent.path,
+          'selection': explorerController.selectedContent.value,
+        };
+        for (int i = explorerController.historyIndex.value + 2;
+            i < explorerController.history.length;
+            i++) {
+          explorerController.history.removeAt(i);
+        }
+      }
+      explorerController.historyIndex.value++;
     }
+  }
+}
+
+class PreviousDirectoryIntent extends Intent {
+  PreviousDirectoryIntent();
+}
+
+class PreviousDirectoryAction extends Action<PreviousDirectoryIntent> {
+  @override
+  void invoke(covariant PreviousDirectoryIntent intent) {
+    if (explorerController.historyIndex.value > 0) {
+      explorerController.historyIndex.value--;
+    }
+    explorerController.path.value =
+        explorerController.history[explorerController.historyIndex.value]['path'];
+    folderContentSync(explorerController.path.value);
+  }
+}
+
+class NextDirectoryIntent extends Intent {
+  NextDirectoryIntent();
+}
+
+class NextDirectoryAction extends Action<NextDirectoryIntent> {
+  @override
+  void invoke(covariant NextDirectoryIntent intent) {
+    if (explorerController.historyIndex.value < (explorerController.history.length - 1)) {
+      explorerController.historyIndex.value++;
+    }
+    explorerController.path.value =
+        explorerController.history[explorerController.historyIndex.value]['path'];
+    explorerController.selectedContent.value =
+        explorerController.history[explorerController.historyIndex.value]['selection'];
+    folderContentSync(explorerController.path.value);
   }
 }
 
@@ -100,9 +159,9 @@ void folderContentSync(String currentPath) {
   explorerController.selectedContent.value = -1;
   explorerController.contents.clear();
   explorerController.path.value = currentPath;
-  explorerController.eDirectory.value = Directory(explorerController.path.value);
+  explorerController.explorerDirectory.value = Directory(explorerController.path.value);
   explorerPathController.text = explorerController.path.value;
-  contentList = explorerController.eDirectory.value.listSync(recursive: false);
+  contentList = explorerController.explorerDirectory.value.listSync(recursive: false);
   for (int i = 0; i < contentList.length; i++) {
     FileSystemEntity element = contentList[i];
     String name = '';
@@ -133,10 +192,14 @@ class FileExplorer extends StatelessWidget {
   FileExplorer() {
     if (explorerController.path.value == '') {
       explorerController.path.value = directory.path;
-      explorerController.eDirectory.value = directory;
+      explorerController.explorerDirectory.value = directory;
       explorerPathController.text = explorerController.path.value;
       explorerController.contents = directoryContents;
     } else {
+      explorerController.path.value =
+          explorerController.history[explorerController.historyIndex.value]['path'];
+      explorerController.selectedContent.value =
+          explorerController.history[explorerController.historyIndex.value]['selection'];
       folderContentSync(explorerController.path.value);
     }
     explorerPathFocusNode.requestFocus();
@@ -149,23 +212,25 @@ class FileExplorer extends StatelessWidget {
         backgroundColor: colorController.bgColor.value,
         body: Actions(
           actions: {
-            NavigateBackIntent: NavigateBackAction(),
+            ExitExplorerIntent: ExitExplorerAction(),
             FocusChangeIntent: FocusChangeAction(),
             SelectContentIntent: SelectContentAction(),
+            PreviousDirectoryIntent: PreviousDirectoryAction(),
+            NextDirectoryIntent: NextDirectoryAction(),
           },
           child: Shortcuts(
             shortcuts: (explorerController.selectedContent.value == (-1))
                 ? {
                     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-                        NavigateBackIntent(),
-                    LogicalKeySet(LogicalKeyboardKey.escape): NavigateBackIntent(),
+                        ExitExplorerIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.escape): ExitExplorerIntent(),
                     LogicalKeySet(LogicalKeyboardKey.arrowDown):
                         FocusChangeIntent(count: 1, focus: true),
                   }
                 : {
                     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-                        NavigateBackIntent(),
-                    LogicalKeySet(LogicalKeyboardKey.escape): NavigateBackIntent(),
+                        ExitExplorerIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.escape): ExitExplorerIntent(),
                     LogicalKeySet(LogicalKeyboardKey.arrowLeft):
                         FocusChangeIntent(count: -1, focus: false),
                     LogicalKeySet(LogicalKeyboardKey.arrowRight):
@@ -178,12 +243,17 @@ class FileExplorer extends StatelessWidget {
                     LogicalKeySet(LogicalKeyboardKey.arrowDown): FocusChangeIntent(
                         count: explorerController.rowContentCount.value, focus: false),
                     LogicalKeySet(LogicalKeyboardKey.enter): SelectContentIntent(
-                        name: explorerController.contents[explorerController.selectedContent.value]
-                            ['name'],
-                        type: explorerController.contents[explorerController.selectedContent.value]
-                            ['type'],
-                        path: explorerController.contents[explorerController.selectedContent.value]
-                            ['path']),
+                      name: explorerController.contents[explorerController.selectedContent.value]
+                          ['name'],
+                      type: explorerController.contents[explorerController.selectedContent.value]
+                          ['type'],
+                      path: explorerController.contents[explorerController.selectedContent.value]
+                          ['path'],
+                    ),
+                    LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.arrowLeft):
+                        PreviousDirectoryIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.arrowRight):
+                        NextDirectoryIntent(),
                   },
             child: Column(
               children: [
