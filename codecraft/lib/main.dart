@@ -552,7 +552,7 @@ class _HomeViewState extends State<HomeView> {
                         editController.editMode.value = !(editController.editMode.value);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
                         if (editController.fileList[editController.activeFile.value]['onDisk']) {
-                          saveFilePrepare();
+                          saveFilePrepare(editController.fileList[editController.activeFile.value]['path']);
                         } else {
                           Get.to(() => SaveFileScreen(
                                 fileName: editController.fileList[editController.activeFile.value]

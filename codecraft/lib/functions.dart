@@ -29,7 +29,6 @@ void textChange(String text) {
     editController.characterChange.value = 0;
     autosave();
   }
-  print(text.length);
   String alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVW0123456789abcdefghijklmnopqrstuvwxyz";
   if (text.length != 0 && (textEditControl.selection.start != 0)) {
     int cursorPosition = textEditControl.selection.start;
@@ -507,16 +506,16 @@ void nextFile() {
   }
 }
 
-void saveFilePrepare() {
+void saveFilePrepare(String path) {
   File saveFile;
   if (editController.fileList[editController.activeFile.value]['extension'] != '') {
-    saveFile = File(directory.path +
+    saveFile = File(path +
         editController.fileList[editController.activeFile.value]['fileName'] +
         '.' +
         editController.fileList[editController.activeFile.value]['extension']);
   } else {
     saveFile =
-        File(directory.path + editController.fileList[editController.activeFile.value]['fileName']);
+        File(path + editController.fileList[editController.activeFile.value]['fileName']);
   }
   saveFileWrite(saveFile);
   editController.fileList[editController.activeFile.value]['saved'] = true;

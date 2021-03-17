@@ -69,9 +69,6 @@ class FocusChangeAction extends Action<FocusChangeIntent> {
       explorerController.selectedContent.value += intent.count;
       explorerController.history[explorerController.historyIndex.value]['selection'] =
           explorerController.selectedContent.value;
-      if (explorerController.selectedContent.value == 0) {
-        explorerFocusNode.unfocus();
-      }
     }
   }
 }
@@ -89,6 +86,7 @@ class SelectContentAction extends Action<SelectContentIntent> {
     if (intent.type == 'File') {
       String newPath;
       newPath = intent.path.substring(0, intent.path.length - intent.name.length);
+      print(newPath);
       createNewFile(fileName: intent.name, filePath: newPath);
       editController.activeFile.value++;
       File openingFile = File(intent.path);
