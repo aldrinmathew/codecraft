@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:codecraft/view/save_file.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import './main.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import './main.dart';
+import 'package:codecraft/view/save_file.dart';
+import 'package:codecraft/model/syntax.dart';
 
 void editModeStart() {
   textEditControl = TextEditingController(
@@ -182,6 +182,8 @@ bool lowerSectionLoopCandidate(BuildContext mainContext, int i) {
   }
 }
 
+int readIndex = 0;
+
 /// Content of each line that is iterated over. One of the most important elements in the application, takes just a lot of lines, now that parse tree is generated.
 List<InlineSpan> lineContent(int i) {
   String indentation = '';
@@ -199,7 +201,26 @@ List<InlineSpan> lineContent(int i) {
       }
       returnSpan.add(TextSpan(
         text: indentation,
+        style: highlightHandler(
+            editController.fileList[editController.activeFile.value]['syntax'], lineContent[j]),
       ));
+    } else if (ruleCheck(editController.fileList[editController.activeFile.value]['syntax'],
+            lineContent.substring(j)) !=
+        -1) {
+      int ruleIndex = ruleCheck(
+        editController.fileList[editController.activeFile.value]['syntax'],
+        lineContent[j],
+      );
+      Map<String, dynamic> rule = ruleLanguage(
+        editController.fileList[editController.activeFile.value]['syntax'],
+        ruleIndex,
+      );
+      List<InlineSpan> temporarySpans = ruleHandler(rule, j, lineContent);
+      returnSpan.addAll(temporarySpans);
+      j = readIndex;
+      if (!(j < lineContent.length)) {
+        j = lineContent.length - 1;
+      }
     } else if (alpha.contains(lineContent[j])) {
       String text = '';
       int k;
@@ -210,16 +231,103 @@ List<InlineSpan> lineContent(int i) {
       }
       returnSpan.add(TextSpan(
         text: text,
+        style: highlightHandler(
+            editController.fileList[editController.activeFile.value]['syntax'], text),
       ));
-      j = k - 1;
+      if (k <= lineContent.length) {
+        j = k - 1;
+      } else {
+        j = lineContent.length - 1;
+      }
       continue;
     } else {
       returnSpan.add(TextSpan(
         text: lineContent[j],
+        style: highlightHandler(
+            editController.fileList[editController.activeFile.value]['syntax'], lineContent[j]),
       ));
     }
   }
   return returnSpan;
+}
+
+List<InlineSpan> ruleHandler(Map<String, dynamic> rule, int j, String lineContent) {
+  List<InlineSpan> totalSpans = [];
+  if (rule['rule'] == 'upto') {
+    String text = lineContent[j];
+    String end = rule['last'];
+    int k = 0;
+    for (k = j + text.length; (k != lineContent.length) ? (lineContent[k] != end) : (false); k++) {
+      if (rule['separate'].length != 0) {
+        for (int l = 0; l < rule['separate'].length; l++) {
+          String separator = rule['separate'][l];
+          if (lineContent[k] == separator) {
+            totalSpans.add(TextSpan(
+              text: text,
+              style: highlightHandler(
+                  editController.fileList[editController.activeFile.value]['syntax'], text),
+            ));
+            List<InlineSpan> temporarySpan = ruleHandler(rule, k, lineContent);
+            totalSpans.addAll(temporarySpan);
+            k = readIndex;
+          } else {
+            text += lineContent[k];
+          }
+        }
+      } else {
+        text += lineContent[k];
+      }
+    }
+    if (!(k < lineContent.length)) {
+      k = lineContent.length - 1;
+    }
+    if ((lineContent[k] == end) && (rule['includeLast'] == true)) {
+      text += lineContent[k];
+    }
+    totalSpans.add(TextSpan(
+      text: text,
+      style: highlightHandler(
+          editController.fileList[editController.activeFile.value]['syntax'], text),
+    ));
+    readIndex = k;
+  } else if (rule['rule'] == 'till') {
+    String text = lineContent[j];
+    int k = 0;
+    for (k = j + text.length;
+        (rule['count'] == 'end') ? (k < lineContent.length) : (k < k + rule['count']);
+        k++) {
+      if (rule['separate'].length != 0) {
+        for (int l = 0; l < rule['separate'].length; l++) {
+          String separator = rule['separate'][l];
+          if (lineContent[k] == separator) {
+            totalSpans.add(TextSpan(
+              text: text,
+              style: highlightHandler(
+                  editController.fileList[editController.activeFile.value]['syntax'], text),
+            ));
+            List<InlineSpan> temporarySpan = ruleHandler(rule, k, lineContent);
+            totalSpans.addAll(temporarySpan);
+            k = readIndex;
+          } else {
+            if (rule['include'] == true) {
+              text += lineContent[k];
+            }
+          }
+        }
+      } else {
+        if (rule['include'] == true) {
+          text += lineContent[k];
+        }
+      }
+    }
+    totalSpans.add(TextSpan(
+      text: text,
+      style: highlightHandler(
+          editController.fileList[editController.activeFile.value]['syntax'], text),
+    ));
+    readIndex = k;
+  }
+  return totalSpans;
 }
 
 /// Checks if the Active Line can be changed to the previous Line. It can't be changed if the Active Line is the first Line in the file.
@@ -451,6 +559,7 @@ void createNewFile({String fileName, String filePath = ''}) {
     'encoding': 'UTF-8',
     'onDisk': false,
     'saved': true,
+    'syntax': fileExtension,
   };
   Map<String, List<String>> newFileContent = {
     'content': [
@@ -474,7 +583,7 @@ String readFile(File openFile) {
   } catch (error) {
     editController.activeFile.value--;
     editController.fileContent.removeAt(editController.activeFile.value + 1);
-    if(error.toString().contains("Failed to decode data using encoding")) {
+    if (error.toString().contains("Failed to decode data using encoding")) {
       return readErrorCodes['ER-READ-1'];
     } else {
       return error.toString();
@@ -514,8 +623,7 @@ void saveFilePrepare(String path) {
         '.' +
         editController.fileList[editController.activeFile.value]['extension']);
   } else {
-    saveFile =
-        File(path + editController.fileList[editController.activeFile.value]['fileName']);
+    saveFile = File(path + editController.fileList[editController.activeFile.value]['fileName']);
   }
   saveFileWrite(saveFile);
   editController.fileList[editController.activeFile.value]['saved'] = true;

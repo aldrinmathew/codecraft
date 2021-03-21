@@ -21,6 +21,7 @@ class EditController extends GetxController {
       'encoding': 'UTF-8',
       'onDisk': false,
       'saved': false,
+      'syntax': '',
     },
   ];
   List<Map<String, List<String>>> fileContent = [
