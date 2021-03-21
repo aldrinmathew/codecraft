@@ -1,10 +1,13 @@
 import 'package:codecraft/main.dart';
+import 'package:codecraft/model/syntax/gitignore.dart';
 import 'package:flutter/material.dart';
 import 'package:codecraft/model/syntax/dart.dart';
 
 TextStyle highlightHandler(String language, String token) {
   if (language == 'dart') {
     return dartHighlight(token);
+  } else if (language == 'gitignore') {
+    return gitignoreHighlight(token);
   } else {
     return TextStyle(
       color: colorController.bgColorContrast.value,
@@ -26,6 +29,15 @@ int ruleCheck(String language, String element) {
         }
       }
     }
+  } else if (language == 'gitignore') {
+    for (int i = 0; i < gitignoreRules.length; i++) {
+      if (gitignoreRules[i]['element'].length <= element.length) {
+        if (gitignoreRules[i]['element'] ==
+            element.substring(0, gitignoreRules[i]['element'].length)) {
+          return i;
+        }
+      }
+    }
   }
   return -1;
 }
@@ -33,6 +45,8 @@ int ruleCheck(String language, String element) {
 Map<String, dynamic> ruleLanguage(String language, int index) {
   if (language == 'dart') {
     return dartRules[index];
+  } else if (language == 'gitignore') {
+    return gitignoreRules[index];
   } else {
     return {};
   }
