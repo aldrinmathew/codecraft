@@ -4,13 +4,25 @@ Welcome to **codecraft**, a simple code editor that helps you to focus on lines 
 
 > **This project runs entirely on donations. Consider a donation if this project proves to be useful to you.**
 
-## Supports Syntax Highlighting
+## Features
+
+Currently, the navigation and editing is all via Keyboard only. But mouse support will most probably be added in the future.
+
+### Syntax Highlighting
 
 ![](resources/images/raster/codecraft_syntax_highlighting.png)
 
-This project was started by Aldrin Mathew 2 months after he started learning flutter. He has a **No AD and no Microtransactions policy**, so this is free forever. Consider donating if you can to help and support development.
+### File Browser
 
-## Features
+![](resources/images/raster/codecraft_file_browser.png)
+
+### Themes
+
+The app supports both Light Mode and Dark Mode. And it can be switched by using `Alt + D`
+
+#
+
+This project was started by Aldrin Mathew 2 months after he started learning flutter. He has a **No AD and no Microtransactions policy**, so this is free forever. Consider donating if you can to help and support development. The following are the key features of the application.
 
 - Single line on focus - no distractions.
 - Rest of the code displayed on the background for reference.
