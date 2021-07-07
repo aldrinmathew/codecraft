@@ -36,4 +36,26 @@ class EditController extends GetxController {
   RxBool isAlphaNum = false.obs;
   RxInt characterCount = 0.obs;
   RxInt errorCount = 0.obs;
+
+  String get activeLine => fileContent[activeFile.value]['content']![fileList[activeFile.value]['activeLine']];
+  set activeLine(String value) {
+    fileContent[activeFile.value]['content']![fileList[activeFile.value]['activeLine']] = value;
+  }
+  
+  int get activeLineIndex => fileList[activeFile.value]['activeLine'];
+  set activeLineIndex(int value) {
+    fileList[activeFile.value]['activeLine'] = value;
+  }
+  
+  List<String> get contentList => fileContent[activeFile.value]['content'] ?? [];
+  set contentList(List<String> values) {
+    fileContent[activeFile.value]['content'] = values;
+  }
+  
+  int get lineCount => fileContent[activeFile.value]['content']!.length;
+  
+  void insertContent({required int index, required String content}) {
+    fileContent[activeFile.value]['content']!.insert(index, content);
+  }
+
 }

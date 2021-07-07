@@ -1,5 +1,7 @@
-import 'package:codecraft/main.dart';
 import 'package:flutter/material.dart';
+
+import '../../main.dart';
+import '../../globals.dart';
 
 List<Map<String, dynamic>> dartRules = [
   {
@@ -38,8 +40,8 @@ List<Map<String, dynamic>> dartRules = [
 
 TextStyle dartHighlight(String token) {
   TextStyle highlightStyle = TextStyle(
-      color: colorController.bgColorContrast.value.withOpacity(0.7),
-      fontWeight: (colorController.isDarkMode.value) ? (FontWeight.normal) : (FontWeight.w500),
+      color: color.contrast.withOpacity(0.7),
+      fontWeight: (color.isDarkMode) ? (FontWeight.normal) : (FontWeight.w500),
       fontFamily: fontFamily,
       fontStyle: FontStyle.normal,
       fontFamilyFallback: [fontFamily]);
@@ -109,6 +111,7 @@ TextStyle dartHighlight(String token) {
       (token.substring(token.length - 1, token.length) == '"')) {
     highlightStyle = highlightStyle.copyWith(
       color: Color.fromRGBO(255, 180, 80, 1.0),
+      fontWeight: FontWeight.bold,
     );
   } else if (token.substring(0, 1) == '\\') {
     highlightStyle = highlightStyle.copyWith(
@@ -118,7 +121,7 @@ TextStyle dartHighlight(String token) {
   } else if ((token == '(') || (token == ')')) {
     highlightStyle = highlightStyle.copyWith(color: Color.fromRGBO(160, 160, 160, 1.0));
   } else if ((token == '[') || (token == ']')) {
-    highlightStyle = highlightStyle.copyWith(color: colorController.bgColorContrast.value);
+    highlightStyle = highlightStyle.copyWith(color: color.contrast);
   } else if ((token == '<') || (token == '>')) {
     highlightStyle = highlightStyle.copyWith(color: Color.fromRGBO(255, 90, 80, 1.0));
   } else if ((token == '+') ||

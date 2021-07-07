@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:codecraft/main.dart';
 import 'package:codecraft/functions.dart';
 
+import '../globals.dart';
+
 TextEditingController saveFileNameController = TextEditingController(text: '');
 FocusNode saveFileNameFocusNode = FocusNode(
   canRequestFocus: true,
@@ -20,7 +22,7 @@ FocusNode keyboardListenerFocus = FocusNode(
 SaveController saveController = SaveController();
 
 class SaveFileScreen extends StatelessWidget {
-  SaveFileScreen({String fileName, String filePath}) {
+  SaveFileScreen({required String fileName, required String filePath}) {
     saveController.saveFileName.value = fileName;
     saveFileNameController = TextEditingController(text: saveController.saveFileName.value);
     if (saveController.saveFilePath.value == '') {
@@ -34,7 +36,7 @@ class SaveFileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: colorController.bgColor.value,
+        color: color.main,
         child: RawKeyboardListener(
           focusNode: keyboardListenerFocus,
           child: Column(
@@ -44,9 +46,9 @@ class SaveFileScreen extends StatelessWidget {
               Text(
                 'Save File',
                 style: TextStyle(
-                  color: colorController.bgColorContrast.value.withOpacity(0.5),
+                  color: color.contrast.withOpacity(0.5),
                   fontFamily: fontFamily,
-                  fontSize: editController.fontSize.value * 2,
+                  fontSize: edit.fontSize.value * 2,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -62,7 +64,7 @@ class SaveFileScreen extends StatelessWidget {
                     Icon(
                       Icons.file_present,
                       size: 40,
-                      color: colorController.bgColorContrast.value.withOpacity(0.5),
+                      color: color.contrast.withOpacity(0.5),
                     ),
                     SizedBox(
                       width: 20,
@@ -77,14 +79,14 @@ class SaveFileScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         textAlignVertical: TextAlignVertical.center,
                         autofocus: true,
-                        cursorWidth: editController.editFontSize.value / 1.7,
-                        cursorColor: colorController.bgColorContrast.value,
+                        cursorWidth: edit.editFontSize.value / 1.7,
+                        cursorColor: color.contrast,
                         cursorHeight: 37,
                         style: TextStyle(
-                          color: colorController.bgColorContrast.value,
+                          color: color.contrast,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.bold,
-                          fontSize: editController.fontSize.value * 2,
+                          fontSize: edit.fontSize.value * 2,
                         ),
                         decoration: null,
                         onSubmitted: (fileName) {
@@ -97,22 +99,22 @@ class SaveFileScreen extends StatelessWidget {
                         },
                       ),
                       decoration: BoxDecoration(
-                        color: colorController.bgColor.value,
+                        color: color.main,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(5, 5))
                                 : (Offset(-5, -5)),
-                            color: colorController.contrastExtreme.value
-                                .withOpacity((colorController.isDarkMode.value) ? 0.5 : 1),
+                            color: color.extremeContrast
+                                .withOpacity((color.isDarkMode) ? 0.5 : 1),
                             blurRadius: 10,
                           ),
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(-5, -5))
                                 : (Offset(5, 5)),
-                            color: colorController.bgColorContrast.value.withOpacity(0.1),
+                            color: color.contrast.withOpacity(0.1),
                             blurRadius: 10,
                           )
                         ],
@@ -134,7 +136,7 @@ class SaveFileScreen extends StatelessWidget {
                       Icon(
                         Icons.circle,
                         size: 10,
-                        color: colorController.bgColorContrast.value.withOpacity(0.5),
+                        color: color.contrast.withOpacity(0.5),
                       ),
                     SizedBox(
                       width: 20,
@@ -149,14 +151,14 @@ class SaveFileScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         textAlignVertical: TextAlignVertical.center,
                         autofocus: true,
-                        cursorWidth: editController.editFontSize.value / 1.7,
-                        cursorColor: colorController.bgColorContrast.value,
+                        cursorWidth: edit.editFontSize.value / 1.7,
+                        cursorColor: color.contrast,
                         cursorHeight: 37,
                         style: TextStyle(
-                          color: colorController.bgColorContrast.value,
+                          color: color.contrast,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.bold,
-                          fontSize: editController.fontSize.value * 0.8,
+                          fontSize: edit.fontSize.value * 0.8,
                         ),
                         decoration: null,
                         onSubmitted: (filePath) {
@@ -173,22 +175,22 @@ class SaveFileScreen extends StatelessWidget {
                         },
                       ),
                       decoration: BoxDecoration(
-                        color: colorController.bgColor.value,
+                        color: color.main,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(5, 5))
                                 : (Offset(-5, -5)),
-                            color: colorController.contrastExtreme.value
-                                .withOpacity((colorController.isDarkMode.value) ? 0.5 : 1),
+                            color: color.extremeContrast
+                                .withOpacity((color.isDarkMode) ? 0.5 : 1),
                             blurRadius: 10,
                           ),
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(-5, -5))
                                 : (Offset(5, 5)),
-                            color: colorController.bgColorContrast.value.withOpacity(0.1),
+                            color: color.contrast.withOpacity(0.1),
                             blurRadius: 10,
                           )
                         ],

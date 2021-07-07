@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../globals.dart';
+
 FocusNode explorerFocusNode = FocusNode(
   canRequestFocus: true,
   descendantsAreFocusable: true,
@@ -15,7 +17,7 @@ FocusNode explorerFocusNode = FocusNode(
 FocusNode explorerPathFocusNode = FocusNode(canRequestFocus: true);
 TextEditingController explorerPathController = TextEditingController(text: '');
 ExplorerController explorerController = ExplorerController();
-List<FileSystemEntity> contentList;
+List<FileSystemEntity> contentList = [];
 
 /*
   Thanks to Tim Whiting
@@ -40,7 +42,7 @@ class ExitExplorerAction extends Action<ExitExplorerIntent> {
 class FocusChangeIntent extends Intent {
   final int count;
   final bool focus;
-  FocusChangeIntent({this.count, this.focus});
+  FocusChangeIntent({required this.count, required this.focus});
 }
 
 class FocusChangeAction extends Action<FocusChangeIntent> {
@@ -77,7 +79,7 @@ class SelectContentIntent extends Intent {
   final String name;
   final String type;
   final String path;
-  SelectContentIntent({this.name, this.type, this.path});
+  SelectContentIntent({required this.name, required this.type, required this.path});
 }
 
 class SelectContentAction extends Action<SelectContentIntent> {
@@ -88,14 +90,13 @@ class SelectContentAction extends Action<SelectContentIntent> {
       newPath = intent.path.substring(0, intent.path.length - intent.name.length);
       print(newPath);
       createNewFile(fileName: intent.name, filePath: newPath);
-      editController.activeFile.value++;
+      edit.activeFile.value++;
       File openingFile = File(intent.path);
       openingFile.open(mode: FileMode.read);
       String readStatus = readFile(openingFile);
       if (readStatus == '') {
-        textEditControl = TextEditingController(
-            text: editController.fileContent[editController.activeFile.value]['content']
-                [editController.fileList[editController.activeFile.value]['activeLine']]);
+        textEdit = TextEditingController(
+            text: edit.fileContent[edit.activeFile.value]['content']![edit.activeLineIndex]);
         Get.back();
       }
     } else {
@@ -209,7 +210,7 @@ class FileExplorer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       return Scaffold(
-        backgroundColor: colorController.bgColor.value,
+        backgroundColor: color.main,
         body: Actions(
           actions: {
             ExitExplorerIntent: ExitExplorerAction(),
@@ -244,11 +245,11 @@ class FileExplorer extends StatelessWidget {
                         count: explorerController.rowContentCount.value, focus: false),
                     LogicalKeySet(LogicalKeyboardKey.enter): SelectContentIntent(
                       name: explorerController.contents[explorerController.selectedContent.value]
-                          ['name'],
+                          ['name']!,
                       type: explorerController.contents[explorerController.selectedContent.value]
-                          ['type'],
+                          ['type']!,
                       path: explorerController.contents[explorerController.selectedContent.value]
-                          ['path'],
+                          ['path']!,
                     ),
                     LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.arrowLeft):
                         PreviousDirectoryIntent(),
@@ -271,45 +272,40 @@ class FileExplorer extends StatelessWidget {
                     textAlign: TextAlign.center,
                     textAlignVertical: TextAlignVertical.center,
                     autofocus: true,
-                    cursorWidth: editController.editFontSize.value / 1.5,
-                    cursorColor: colorController.bgColorContrast.value,
-                    cursorHeight: editController.editFontSize.value * 1.4,
+                    cursorWidth: edit.editFontSize.value / 1.5,
+                    cursorColor: color.contrast,
+                    cursorHeight: edit.editFontSize.value * 1.4,
                     enableInteractiveSelection: true,
                     enabled: true,
                     decoration: InputDecoration(border: InputBorder.none),
                     style: TextStyle(
-                      color: colorController.bgColorContrast.value,
+                      color: color.contrast,
                       fontFamily: fontFamily,
-                      fontSize: editController.editFontSize.value * 0.8,
-                      fontWeight: (colorController.isDarkMode.value)
-                          ? (FontWeight.normal)
-                          : (FontWeight.w500),
+                      fontSize: edit.editFontSize.value * 0.8,
+                      fontWeight: (color.isDarkMode) ? (FontWeight.normal) : (FontWeight.w500),
                     ),
                     onTap: () {
                       explorerController.selectedContent.value = -1;
                     },
                   ),
                   decoration: BoxDecoration(
-                    color: colorController.bgColor.value,
+                    color: color.main,
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                       color: (explorerController.selectedContent.value == (-1))
-                          ? (colorController.appStyleColor)
+                          ? (color.style)
                           : (Colors.transparent),
                       width: 2.0,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        offset:
-                            (colorController.isDarkMode.value) ? (Offset(5, 5)) : (Offset(-5, -5)),
-                        color: colorController.contrastExtreme.value
-                            .withOpacity((colorController.isDarkMode.value) ? 0.5 : 1),
+                        offset: (color.isDarkMode) ? (Offset(5, 5)) : (Offset(-5, -5)),
+                        color: color.black.withOpacity((color.isDarkMode) ? 0.5 : 1),
                         blurRadius: 10,
                       ),
                       BoxShadow(
-                        offset:
-                            (colorController.isDarkMode.value) ? (Offset(-5, -5)) : (Offset(5, 5)),
-                        color: colorController.bgColorContrast.value.withOpacity(0.1),
+                        offset: (color.isDarkMode) ? (Offset(-5, -5)) : (Offset(5, 5)),
+                        color: color.contrast.withOpacity(0.1),
                         blurRadius: 10,
                       )
                     ],
@@ -319,7 +315,7 @@ class FileExplorer extends StatelessWidget {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.all(20),
-                    color: colorController.bgColor.value,
+                    color: color.main,
                     child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: explorerController.rowContentCount.value,
@@ -340,40 +336,41 @@ class FileExplorer extends StatelessWidget {
                               children: [
                                 Icon(
                                   iconPicker(
-                                      name: explorerController.contents[i]['name'],
-                                      type: explorerController.contents[i]['type']),
-                                  color: (explorerController.contents[i]['name'].substring(0, 1) ==
+                                      name: explorerController.contents[i]['name']!,
+                                      type: explorerController.contents[i]['type']!),
+                                  color: (explorerController.contents[i]['name']!.substring(0, 1) ==
                                           '.')
-                                      ? (colorController.bgColorContrast.value.withOpacity(0.6))
-                                      : (colorController.bgColorContrast.value.withOpacity(0.9)),
+                                      ? (color.contrast.withOpacity(0.6))
+                                      : (color.contrast.withOpacity(0.9)),
                                   size: 70,
                                 ),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 Text(
-                                  explorerController.contents[i]['name'],
+                                  explorerController.contents[i]['name']!,
                                   style: TextStyle(
-                                    color: (explorerController.contents[i]['name']
-                                                .substring(0, 1) ==
-                                            '.')
-                                        ? (colorController.bgColorContrast.value.withOpacity(0.7))
-                                        : (colorController.bgColorContrast.value.withOpacity(1)),
+                                    color:
+                                        (explorerController.contents[i]['name']!.substring(0, 1) ==
+                                                '.')
+                                            ? (color.contrast.withOpacity(0.7))
+                                            : (color.contrast.withOpacity(1)),
                                     fontFamily: fontFamily,
-                                    fontWeight: (colorController.isDarkMode.value)
-                                        ? (FontWeight.w500)
-                                        : (FontWeight.bold),
+                                    fontWeight: color.chooser(
+                                      lightMode: FontWeight.w500,
+                                      darkMode: FontWeight.bold,
+                                    ),
                                     fontSize: 15,
                                   ),
                                 ),
                               ],
                             ),
                             decoration: BoxDecoration(
-                              color: colorController.bgColor.value,
+                              color: color.main,
                               borderRadius: BorderRadius.circular(30),
                               border: Border.all(
                                   color: (explorerController.selectedContent.value == i)
-                                      ? (colorController.appStyleColor.withOpacity(0.7))
+                                      ? (color.style.withOpacity(0.7))
                                       : (Colors.transparent),
                                   width: 4.0),
                             ),
@@ -389,7 +386,7 @@ class FileExplorer extends StatelessWidget {
     });
   }
 
-  IconData iconPicker({String name, String type}) {
+  IconData iconPicker({required String name, required String type}) {
     Map<String, IconData> fileIconMap = {
       'git': MdiIcons.git,
       'gitignore': MdiIcons.git,
@@ -436,13 +433,13 @@ class FileExplorer extends StatelessWidget {
       if (name.contains('.')) {
         String ext = name.split('.')[name.split('.').length - 1].toLowerCase();
         if (fileIconMap.containsKey(ext)) {
-          return fileIconMap[ext];
+          return fileIconMap[ext]!;
         } else {
           return MdiIcons.file;
         }
       } else {
         if (fileIconMap.containsKey(name.toLowerCase())) {
-          return fileIconMap[name.toLowerCase()];
+          return fileIconMap[name.toLowerCase()]!;
         } else {
           return MdiIcons.file;
         }

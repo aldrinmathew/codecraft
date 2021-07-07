@@ -6,18 +6,20 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:intl/intl.dart';
-import 'package:codecraft/view/status_bar.dart';
-import 'package:codecraft/view/new_file.dart';
-import 'package:codecraft/view/save_file.dart';
-import 'package:codecraft/view/file_explorer.dart';
-import 'package:codecraft/controller/global_controller.dart';
-import 'package:codecraft/functions.dart';
-import 'package:codecraft/controller/color_controller.dart';
-import 'package:codecraft/controller/edit_controller.dart';
 
-Directory directory;
-Directory codecraftDirectory;
-Directory autosaveDirectory;
+import 'view/status_bar.dart';
+import 'view/new_file.dart';
+import 'view/save_file.dart';
+import 'view/file_explorer.dart';
+import 'controller/global_controller.dart';
+import 'functions.dart';
+import 'controller/edit_controller.dart';
+
+import 'globals.dart';
+
+Directory directory = Directory(Directory.current.path);
+Directory codecraftDirectory = Directory(Directory.current.path);
+Directory autosaveDirectory = Directory(Directory.current.path);
 List<Map<String, String>> directoryContents = [];
 bool previousOpen = false;
 
@@ -54,7 +56,7 @@ void main(List<String> arguments) {
         cachePath = cachePath.substring(0, cachePath.length - fileName.length);
         directory = Directory(cachePath);
         createNewFile(fileName: fileName, filePath: cachePath);
-        editController.activeFile.value++;
+        edit.activeFile.value++;
         readFile(cacheFile);
       }
     }
@@ -116,28 +118,27 @@ void main(List<String> arguments) {
     }
   }
 
-  editController.fileList[editController.activeFile.value]['path'] = directory.path;
+  edit.fileList[edit.activeFile.value]['path'] = directory.path;
 
   if (Platform.isWindows) {
-    editController.endOfLine.value = '\r\n';
+    edit.endOfLine.value = '\r\n';
   } else {
-    editController.endOfLine.value = '\n';
+    edit.endOfLine.value = '\n';
   }
 
   runApp(CodeCraft());
 }
 
-String fontFamily = "FiraCode";
-ColorController colorController = ColorController();
-EditController editController = EditController();
+String fontFamily = 'FiraCode';
+EditController edit = EditController();
 GlobalController globalController = GlobalController();
-TextEditingController textEditControl;
-FocusNode editTextFocusNode;
-FocusNode homeViewFocusNode;
+TextEditingController textEdit = TextEditingController();
+FocusNode editTextFocusNode = FocusNode(canRequestFocus: true);
+FocusNode homeViewFocusNode = FocusNode(canRequestFocus: true);
 StopWatchTimer editModeTimer = StopWatchTimer(
   onChange: (value) {
     String displayTime = StopWatchTimer.getDisplayTime(value);
-    editController.editModeTime.value = displayTime;
+    edit.editModeTime.value = displayTime;
   },
 );
 StopWatchTimer globalTimer = StopWatchTimer(
@@ -154,7 +155,7 @@ class CodeCraft extends StatelessWidget {
       title: 'Codecraft',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: colorController.appStyleColor,
+        primarySwatch: color.materialColor,
       ),
       home: HomeView(),
     );
@@ -168,7 +169,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   AlertDialog newFileDialog = AlertDialog(
-    backgroundColor: colorController.bgColor.value,
+    backgroundColor: color.main,
     content: TextField(
       enabled: true,
       decoration: InputDecoration(
@@ -193,7 +194,7 @@ class _HomeViewState extends State<HomeView> {
       canRequestFocus: true,
       descendantsAreFocusable: false,
     );
-    textEditControl = TextEditingController(text: '');
+    textEdit = TextEditingController(text: '');
     globalTimer.onExecute.add(StopWatchExecute.start);
     super.initState();
   }
@@ -212,7 +213,7 @@ class _HomeViewState extends State<HomeView> {
       child: Container(
         child: Row(
           children: [
-            for (int i = 0; i < editController.fileList.length; i++)
+            for (int i = 0; i < edit.fileList.length; i++)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Stack(
@@ -221,24 +222,24 @@ class _HomeViewState extends State<HomeView> {
                       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Row(
                         children: [
-                          if (editController.activeFile.value == i)
+                          if (edit.activeFile.value == i)
                             Icon(
                               Icons.file_present,
                               size: 15,
-                              color: colorController.bgColorContrast.value.withOpacity(
-                                  (editController.activeFile.value == i) ? (0.5) : (0.3)),
+                              color: color.contrast
+                                  .withOpacity((edit.activeFile.value == i) ? (0.5) : (0.3)),
                             ),
                           Text(
-                            (editController.fileList[i]['extension'] == '')
-                                ? (editController.fileList[i]['fileName'])
-                                : (editController.fileList[i]['fileName'] +
+                            (edit.fileList[i]['extension'] == '')
+                                ? (edit.fileList[i]['fileName'])
+                                : (edit.fileList[i]['fileName'] +
                                     '.' +
-                                    editController.fileList[i]['extension']),
+                                    edit.fileList[i]['extension']),
                             style: TextStyle(
-                              color: colorController.bgColorContrast.value.withOpacity(
-                                  (editController.activeFile.value == i) ? (0.8) : (0.5)),
+                              color: color.contrast
+                                  .withOpacity((edit.activeFile.value == i) ? (0.8) : (0.5)),
                               fontFamily: fontFamily,
-                              fontWeight: (editController.activeFile.value == i)
+                              fontWeight: (edit.activeFile.value == i)
                                   ? (FontWeight.bold)
                                   : (FontWeight.normal),
                             ),
@@ -246,37 +247,40 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                       decoration: BoxDecoration(
-                        color: colorController.bgColor.value,
+                        color: color.main,
                         borderRadius: BorderRadius.circular(7),
                         boxShadow: [
-                          if (editController.activeFile.value == i)
+                          if (edit.activeFile.value == i)
                             BoxShadow(
                               blurRadius: 3,
-                              color: colorController.bgColorContrast.value.withOpacity(0.1),
-                              offset: (colorController.isDarkMode.value)
-                                  ? (Offset(-3, -3))
-                                  : (Offset(3, 3)),
+                              color: color.contrast.withOpacity(0.1),
+                              offset: color.chooser(
+                                darkMode: Offset(-3, -3),
+                                lightMode: Offset(3, 3),
+                              ),
                             ),
-                          if (editController.activeFile.value == i)
+                          if (edit.activeFile.value == i)
                             BoxShadow(
                               blurRadius: 3,
-                              color: colorController.contrastExtreme.value
-                                  .withOpacity((colorController.isDarkMode.value) ? (0.2) : (0.8)),
-                              offset: (colorController.isDarkMode.value)
-                                  ? (Offset(3, 3))
-                                  : (Offset(-3, -3)),
+                              color: color.dark.withOpacity(
+                                color.chooser(darkMode: 0.8, lightMode: 0.2),
+                              ),
+                              offset: color.chooser(
+                                darkMode: Offset(-3, -3),
+                                lightMode: Offset(3, 3),
+                              ),
                             )
                         ],
                       ),
                     ),
-                    if (!(editController.fileList[i]['saved']))
+                    if (!(edit.fileList[i]['saved']))
                       Positioned(
                         top: 0.0,
                         right: 0.0,
                         child: Icon(
                           Icons.circle,
                           size: 12,
-                          color: colorController.bgColorContrast.value,
+                          color: color.contrast,
                         ),
                       ),
                   ],
@@ -298,10 +302,10 @@ class _HomeViewState extends State<HomeView> {
             height: (MediaQuery.of(mainContext).size.height -
                     (MediaQuery.of(mainContext).size.height *
                         0.06 *
-                        (editController.editFontSize.value / 20))) /
+                        (edit.editFontSize.value / 20))) /
                 2,
             width: MediaQuery.of(mainContext).size.width,
-            child: ((editController.fileList[editController.activeFile.value]['activeLine']) != 0)
+            child: ((edit.activeLineIndex) != 0)
                 ? FittedBox(
                     child: ClipRRect(
                       child: Column(
@@ -327,10 +331,9 @@ class _HomeViewState extends State<HomeView> {
                                         lineNumber(i),
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
-                                          color: colorController.bgColorContrast.value
-                                              .withOpacity(0.5),
+                                          color: color.contrast.withOpacity(0.5),
                                           fontFamily: fontFamily,
-                                          fontSize: editController.fontSize.value,
+                                          fontSize: edit.fontSize.value,
                                           fontWeight: FontWeight.normal,
                                           fontStyle: FontStyle.italic,
                                         ),
@@ -343,13 +346,10 @@ class _HomeViewState extends State<HomeView> {
                                       text: TextSpan(
                                         children: lineContent(i),
                                         style: TextStyle(
-                                          color: colorController.bgColorContrast.value
-                                              .withOpacity(0.8),
+                                          color: color.contrast.withOpacity(0.8),
                                           fontFamily: globalController.displayFont.value,
-                                          fontWeight: (colorController.isDarkMode.value)
-                                              ? (FontWeight.normal)
-                                              : (FontWeight.w500),
-                                          fontSize: editController.fontSize.value,
+                                          fontWeight: color.fontWeight,
+                                          fontSize: edit.fontSize.value,
                                         ),
                                       ),
                                     ),
@@ -364,11 +364,9 @@ class _HomeViewState extends State<HomeView> {
                 : (Container()),
           ),
         ),
-        if (editController.editMode.value)
+        if (edit.editMode.value)
           Container(
-            height: MediaQuery.of(mainContext).size.height *
-                0.06 *
-                (editController.editFontSize.value / 20),
+            height: MediaQuery.of(mainContext).size.height * 0.06 * (edit.editFontSize.value / 20),
           ),
         Expanded(
           child: (lowerSectionValidity())
@@ -378,7 +376,7 @@ class _HomeViewState extends State<HomeView> {
                   height: (MediaQuery.of(mainContext).size.height -
                           (MediaQuery.of(mainContext).size.height *
                               0.06 *
-                              (editController.editFontSize.value / 20))) /
+                              (edit.editFontSize.value / 20))) /
                       2,
                   width: MediaQuery.of(mainContext).size.width,
                   child: FittedBox(
@@ -387,9 +385,7 @@ class _HomeViewState extends State<HomeView> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (int i = editController.fileList[editController.activeFile.value]
-                                      ['activeLine'] +
-                                  1;
+                          for (int i = edit.fileList[edit.activeFile.value]['activeLine'] + 1;
                               lowerSectionLoopCandidate(mainContext, i);
                               i++)
                             Container(
@@ -408,10 +404,9 @@ class _HomeViewState extends State<HomeView> {
                                         lineNumber(i),
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
-                                          color: colorController.bgColorContrast.value
-                                              .withOpacity(0.5),
+                                          color: color.contrast.withOpacity(0.5),
                                           fontFamily: fontFamily,
-                                          fontSize: editController.fontSize.value,
+                                          fontSize: edit.fontSize.value,
                                           fontWeight: FontWeight.normal,
                                           fontStyle: FontStyle.italic,
                                         ),
@@ -424,13 +419,10 @@ class _HomeViewState extends State<HomeView> {
                                       text: TextSpan(
                                         children: lineContent(i),
                                         style: TextStyle(
-                                          color: colorController.bgColorContrast.value
-                                              .withOpacity(0.8),
+                                          color: color.contrast.withOpacity(0.8),
                                           fontFamily: globalController.displayFont.value,
-                                          fontWeight: (colorController.isDarkMode.value)
-                                              ? (FontWeight.normal)
-                                              : (FontWeight.w500),
-                                          fontSize: editController.fontSize.value,
+                                          fontWeight: color.fontWeight,
+                                          fontSize: edit.fontSize.value,
                                         ),
                                       ),
                                     ),
@@ -453,7 +445,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext mainContext) {
     return Obx(() {
       return Scaffold(
-        backgroundColor: colorController.bgColor.value,
+        backgroundColor: color.main,
         body: Container(
           height: MediaQuery.of(mainContext).size.height,
           width: MediaQuery.of(mainContext).size.width,
@@ -470,8 +462,8 @@ class _HomeViewState extends State<HomeView> {
                     alignment: Alignment.center,
                     children: [
                       openFiles(mainContext),
-                      if (editController.editMode.value) editPanel(mainContext),
-                      if (editController.editMode.value)
+                      if (edit.editMode.value) editPanel(mainContext),
+                      if (edit.editMode.value)
                         Row(
                           children: [
                             Expanded(
@@ -481,25 +473,23 @@ class _HomeViewState extends State<HomeView> {
                                   width: MediaQuery.of(mainContext).size.width * 0.9,
                                   height: (MediaQuery.of(mainContext).size.height *
                                       0.06 *
-                                      (editController.editFontSize.value / 20)),
+                                      (edit.editFontSize.value / 20)),
                                   child: TextField(
                                     focusNode: editTextFocusNode,
-                                    controller: textEditControl,
+                                    controller: textEdit,
                                     textAlign: TextAlign.center,
                                     textAlignVertical: TextAlignVertical.center,
                                     autofocus: false,
-                                    cursorWidth: editController.editFontSize.value / 1.5,
-                                    cursorColor: colorController.bgColorContrast.value,
-                                    cursorHeight: editController.editFontSize.value * 1.4,
+                                    cursorWidth: edit.editFontSize.value / 1.5,
+                                    cursorColor: color.contrast,
+                                    cursorHeight: edit.editFontSize.value * 1.4,
                                     enableInteractiveSelection: true,
                                     decoration: null,
                                     style: TextStyle(
-                                      color: colorController.bgColorContrast.value,
+                                      color: color.contrast,
                                       fontFamily: fontFamily,
-                                      fontSize: editController.editFontSize.value,
-                                      fontWeight: (colorController.isDarkMode.value)
-                                          ? (FontWeight.normal)
-                                          : (FontWeight.w500),
+                                      fontSize: edit.editFontSize.value,
+                                      fontWeight: color.fontWeight,
                                     ),
                                     onChanged: (text) {
                                       textChange(text);
@@ -510,22 +500,23 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: colorController.bgColor.value,
+                                  color: color.main,
                                   borderRadius: BorderRadius.circular(15),
                                   boxShadow: [
                                     BoxShadow(
-                                      offset: (colorController.isDarkMode.value)
-                                          ? (Offset(5, 5))
-                                          : (Offset(-5, -5)),
-                                      color: colorController.contrastExtreme.value.withOpacity(
-                                          (colorController.isDarkMode.value) ? 0.5 : 1),
+                                      offset: color.chooser(
+                                        darkMode: Offset(5, 5),
+                                        lightMode: Offset(-5, -5),
+                                      ),
+                                      color: color.dark.withOpacity(color.isDarkMode ? 0.5 : 1),
                                       blurRadius: 10,
                                     ),
                                     BoxShadow(
-                                      offset: (colorController.isDarkMode.value)
-                                          ? (Offset(-5, -5))
-                                          : (Offset(5, 5)),
-                                      color: colorController.bgColorContrast.value.withOpacity(0.1),
+                                      offset: color.chooser(
+                                        darkMode: Offset(-5, -5),
+                                        lightMode: Offset(5, 5),
+                                      ),
+                                      color: color.contrast.withOpacity(0.1),
                                       blurRadius: 10,
                                     )
                                   ],
@@ -538,27 +529,25 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   onKey: (keyEvent) async {
                     if (keyEvent.isKeyPressed(LogicalKeyboardKey.tab) &&
-                        editController.editMode.value &&
+                        edit.editMode.value &&
                         editTextFocusNode.hasPrimaryFocus) {
                       tabKeyHandler();
                     }
                     if (keyEvent.isControlPressed) {
-                      if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
-                        if (!(editController.editMode.value)) {
+                      if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyE)) {
+                        if (!(edit.editMode.value)) {
                           editModeStart();
                         } else {
                           editModeEnd();
                         }
-                        editController.editMode.value = !(editController.editMode.value);
+                        edit.editMode.value = !(edit.editMode.value);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyS)) {
-                        if (editController.fileList[editController.activeFile.value]['onDisk']) {
-                          saveFilePrepare(editController.fileList[editController.activeFile.value]['path']);
+                        if (edit.fileList[edit.activeFile.value]['onDisk']) {
+                          saveFilePrepare(edit.fileList[edit.activeFile.value]['path']);
                         } else {
                           Get.to(() => SaveFileScreen(
-                                fileName: editController.fileList[editController.activeFile.value]
-                                    ['fileName'],
-                                filePath: editController.fileList[editController.activeFile.value]
-                                    ['path'],
+                                fileName: edit.fileList[edit.activeFile.value]['fileName'],
+                                filePath: edit.fileList[edit.activeFile.value]['path'],
                               ));
                         }
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyN)) {
@@ -566,9 +555,9 @@ class _HomeViewState extends State<HomeView> {
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyF)) {
                         Get.to(() => FileExplorer());
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
-                        editController.fontSize.value++;
+                        edit.fontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
-                        editController.fontSize.value--;
+                        edit.fontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyQ)) {
                         exit(0);
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
@@ -583,14 +572,14 @@ class _HomeViewState extends State<HomeView> {
                         // Implementation yet to be done for Type Speed Practise Screen.
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
-                      if (editController.editMode.value) {
-                        editController.errorCount.value++;
+                      if (edit.editMode.value) {
+                        edit.errorCount.value++;
                         if (backspaceCandidate()) {
                           backspaceLine();
                         }
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.delete)) {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         if (deleteNextlineCandidate()) {
                           deleteNewLine();
                         }
@@ -607,11 +596,11 @@ class _HomeViewState extends State<HomeView> {
                       // Implementation of custom inserts removed for refactor.
                     } else if (keyEvent.isAltPressed) {
                       if (keyEvent.isKeyPressed(LogicalKeyboardKey.equal)) {
-                        editController.editFontSize.value++;
+                        edit.editFontSize.value++;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.minus)) {
-                        editController.editFontSize.value--;
+                        edit.editFontSize.value--;
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.keyD)) {
-                        colorController.darkModeChanger();
+                        color.darkModeChanger();
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
                         previousFile();
                       } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
@@ -632,29 +621,29 @@ class _HomeViewState extends State<HomeView> {
                     // Autocompletion of Basic Characters: ' " [ { ( <
 
                     else if (keyEvent.character == '[') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         autoCompleteBasic('[');
                       }
                     } else if (keyEvent.character == '(') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         autoCompleteBasic('(');
                       }
                     } else if (keyEvent.character == '{') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         autoCompleteBasic('{');
                       }
                     } else if (keyEvent.character == '\'') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         autoCompleteBasic('\'');
                       }
                     } else if (keyEvent.character == '"') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         autoCompleteBasic('"');
                       }
                     } else if (keyEvent.character == '<') {
-                      if (editController.editMode.value) {
+                      if (edit.editMode.value) {
                         // Checking to see if there is a selection, since the < and > characters are usually part of expressions.
-                        if (textEditControl.selection.start != textEditControl.selection.end) {
+                        if (textEdit.selection.start != textEdit.selection.end) {
                           autoCompleteBasic('<');
                         }
                       }
@@ -664,14 +653,12 @@ class _HomeViewState extends State<HomeView> {
 
                     else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
                       if (upLineCandidate()) {
-                        activeLineDecrement(editController
-                                .fileContent[editController.activeFile.value]['content'].length -
+                        activeLineDecrement(edit.lineCount -
                             1); // Passing a large value which is one less than the length of the array, so that it will go to the first line
                       }
                     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
                       if (downLineCandidate()) {
-                        activeLineIncrement(editController
-                                .fileContent[editController.activeFile.value]['content'].length -
+                        activeLineIncrement(edit.lineCount -
                             1); // Passing a large value which is one less than the length of the array, so that it will go to the last line
                       }
                     }

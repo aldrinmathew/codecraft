@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:codecraft/main.dart';
-import 'package:codecraft/functions.dart';
 
-FocusNode newFileNameFocusNode;
-TextEditingController newFileNameController;
+import '../main.dart';
+import '../globals.dart';
+import '../functions.dart';
+
+FocusNode newFileNameFocusNode = FocusNode(canRequestFocus: true);
+TextEditingController newFileNameController = TextEditingController();
 
 class NewFileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: colorController.bgColor.value,
+        color: color.main,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -20,9 +22,9 @@ class NewFileScreen extends StatelessWidget {
             Text(
               'New File',
               style: TextStyle(
-                color: colorController.bgColorContrast.value.withOpacity(0.5),
+                color: color.contrast.withOpacity(0.5),
                 fontFamily: fontFamily,
-                fontSize: editController.fontSize.value * 2,
+                fontSize: edit.fontSize.value * 2,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -40,7 +42,7 @@ class NewFileScreen extends StatelessWidget {
                     Icon(
                       Icons.file_present,
                       size: 40,
-                      color: colorController.bgColorContrast.value.withOpacity(0.5),
+                      color: color.contrast.withOpacity(0.5),
                     ),
                     SizedBox(
                       width: 20,
@@ -54,39 +56,38 @@ class NewFileScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         textAlignVertical: TextAlignVertical.center,
                         autofocus: true,
-                        cursorWidth: editController.editFontSize.value / 1.7,
-                        cursorColor: colorController.bgColorContrast.value,
+                        cursorWidth: edit.editFontSize.value / 1.7,
+                        cursorColor: color.contrast,
                         cursorHeight: 37,
                         style: TextStyle(
-                          color: colorController.bgColorContrast.value,
+                          color: color.contrast,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.bold,
-                          fontSize: editController.fontSize.value * 2,
+                          fontSize: edit.fontSize.value * 2,
                         ),
                         decoration: null,
                         onSubmitted: (fileName) {
                           createNewFile(fileName: fileName, filePath: '');
                           Get.back();
-                          editController.activeFile.value += 1;
+                          edit.activeFile.value += 1;
                         },
                       ),
                       decoration: BoxDecoration(
-                        color: colorController.bgColor.value,
+                        color: color.main,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(5, 5))
                                 : (Offset(-5, -5)),
-                            color: colorController.contrastExtreme.value
-                                .withOpacity((colorController.isDarkMode.value) ? 0.5 : 1),
+                            color: color.extremeContrast.withOpacity((color.isDarkMode) ? 0.5 : 1),
                             blurRadius: 10,
                           ),
                           BoxShadow(
-                            offset: (colorController.isDarkMode.value)
+                            offset: (color.isDarkMode)
                                 ? (Offset(-5, -5))
                                 : (Offset(5, 5)),
-                            color: colorController.bgColorContrast.value.withOpacity(0.1),
+                            color: color.contrast.withOpacity(0.1),
                             blurRadius: 10,
                           )
                         ],

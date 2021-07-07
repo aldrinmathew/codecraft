@@ -1,7 +1,9 @@
-import 'package:codecraft/main.dart';
-import 'package:codecraft/model/syntax/gitignore.dart';
 import 'package:flutter/material.dart';
-import 'package:codecraft/model/syntax/dart.dart';
+
+import '../globals.dart';
+import '../main.dart';
+import '../model/syntax/gitignore.dart';
+import '../model/syntax/dart.dart';
 
 TextStyle highlightHandler(String language, String token) {
   if (language == 'dart') {
@@ -10,10 +12,10 @@ TextStyle highlightHandler(String language, String token) {
     return gitignoreHighlight(token);
   } else {
     return TextStyle(
-      color: colorController.bgColorContrast.value,
+      color: color.contrast,
       fontFamily: fontFamily,
       fontFamilyFallback: [fontFamily],
-      fontSize: editController.fontSize.value,
+      fontSize: edit.fontSize.value,
       fontStyle: FontStyle.normal,
       fontWeight: FontWeight.normal,
     );

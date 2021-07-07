@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../globals.dart';
 import '../main.dart';
 import '../functions.dart';
 
@@ -18,7 +20,7 @@ Widget statusBar(BuildContext mainContext) {
               Text(
                 'codecraft',
                 style: TextStyle(
-                  color: colorController.bgColorContrast.value,
+                  color: color.contrast,
                   fontFamily: fontFamily,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
@@ -27,7 +29,7 @@ Widget statusBar(BuildContext mainContext) {
               Text(
                 ' - Aldrin Mathew',
                 style: TextStyle(
-                  color: colorController.bgColorContrast.value,
+                  color: color.contrast,
                   fontFamily: fontFamily,
                   fontWeight: FontWeight.normal,
                   fontSize: 12,
@@ -41,29 +43,29 @@ Widget statusBar(BuildContext mainContext) {
             Icon(
               Icons.keyboard,
               size: 18,
-              color: colorController.bgColorContrast.value,
+              color: color.contrast,
             ),
             SizedBox(
               width: 5,
             ),
             Icon(
-              (colorController.isDarkMode.value) ? (Icons.lightbulb_outline) : (Icons.lightbulb),
+              (color.isDarkMode) ? (Icons.lightbulb_outline) : (Icons.lightbulb),
               size: 13,
-              color: colorController.bgColorContrast.value,
+              color: color.contrast,
             ),
           ],
         ),
         Text(
-          (editController.fileList[editController.activeFile.value]['endOfLine'] == 'system')
-              ? (editController.endOfLine.value)
-              : ((editController.fileList[editController.activeFile.value]['endOfLine'] !=
-                      editController.endOfLine.value)
-                  ? (editController.fileList[editController.activeFile.value]['endOfLine'] +
+          (edit.fileList[edit.activeFile.value]['endOfLine'] == 'system')
+              ? (edit.endOfLine.value)
+              : ((edit.fileList[edit.activeFile.value]['endOfLine'] !=
+                      edit.endOfLine.value)
+                  ? (edit.fileList[edit.activeFile.value]['endOfLine'] +
                       ' | ' +
-                      editController.endOfLine.value)
-                  : (editController.endOfLine.value)),
+                      edit.endOfLine.value)
+                  : (edit.endOfLine.value)),
           style: TextStyle(
-            color: colorController.bgColorContrast.value,
+            color: color.contrast,
             fontFamily: fontFamily,
             fontWeight: FontWeight.normal,
             fontSize: 12,
@@ -74,7 +76,7 @@ Widget statusBar(BuildContext mainContext) {
           child: Text(
             modeValue(),
             style: TextStyle(
-              color: colorController.bgColorContrast.value,
+              color: color.contrast,
               fontFamily: fontFamily,
               fontWeight: FontWeight.bold,
               fontSize: 12,
@@ -86,7 +88,7 @@ Widget statusBar(BuildContext mainContext) {
           child: Text(
             modeTimerText(),
             style: TextStyle(
-              color: colorController.bgColorContrast.value,
+              color: color.contrast,
               fontFamily: fontFamily,
               fontWeight: FontWeight.normal,
               fontSize: 12,
@@ -100,7 +102,7 @@ Widget statusBar(BuildContext mainContext) {
                 TextSpan(
                   text: lineCount(),
                   style: TextStyle(
-                    color: colorController.bgColorContrast.value,
+                    color: color.contrast,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
@@ -109,7 +111,7 @@ Widget statusBar(BuildContext mainContext) {
                 TextSpan(
                   text: ' | ',
                   style: TextStyle(
-                    color: colorController.bgColorContrast.value,
+                    color: color.contrast,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
@@ -118,7 +120,7 @@ Widget statusBar(BuildContext mainContext) {
                 TextSpan(
                   text: lineCharacterCount(),
                   style: TextStyle(
-                    color: colorController.bgColorContrast.value,
+                    color: color.contrast,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
@@ -129,7 +131,7 @@ Widget statusBar(BuildContext mainContext) {
       ],
     ),
     decoration: BoxDecoration(
-      color: colorController.bgColorContrast.value.withOpacity(0.1),
+      color: color.contrast.withOpacity(0.1),
     ),
   );
 }
